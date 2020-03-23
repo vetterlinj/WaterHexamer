@@ -11,13 +11,14 @@ read_float = lambda datag: get_float(datag.read(8))
 read_float_block = lambda data, nblocks: np.frombuffer(data.read(8*nblocks), dtype=float)
 #fstrings
 #list of files
-files=['d2o6_book','d206_prism','d206_cage','h2o_d2o5_book','h2o_d2o5_prism','h2o_d2o5_cage','h2o5_d2o_book','h2o5_d2o_prism','h2o5_d2o_cage','h2o6_book','h206_prism','h206_cage','sample']
-
+files=['d2o6_book','h2o6_prism','d2o6_prism','d2o6_cage','h2o6_cage','h2o_d2o5_book','h2o_d2o5_prism','h2o_d2o5_cage','h2o5_d2o_book','h2o5_d2o_prism','h2o5_d2o_cage','h2o6_book','sample']
+#'d2o6_prism','d2o6_cage','h2o6_prism','h2o6_cage',
 
 #numberofsets=1
-count=0
-numbersum=0
+
+#numbersum=0
 for file in files:
+    count = 0
     data = open(f"NickFiles/VictorData/{file}/{file}_coords.dat", "rb")
     weightfile = open(f"NickFiles/VictorData/{file}/{file}_weight.dat", "r")
     skip_ws(data)
@@ -31,6 +32,7 @@ for file in files:
         read_int(data);
         read_int(data)
         number=read_int(data)
+        print(number)
         initialwalkers= read_int(data)
         time=read_float(data)
         # print(read_int(data))
@@ -59,14 +61,16 @@ for file in files:
         #Weights file:
         weightfile.readline()
         weights=[]
+        print('weightstime')
         for x in range(0, number):
             weights.append(weightfile.readline())
             weights[x] = weights[x].strip()
             weights[x] = np.double(weights[x])
 
-        numbersum=numbersum+number
+#        numbersum=numbersum+number
 
         np.savez(f'NickFiles/VictorData/{file}/PythonData/{file}{str(count)}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers)
+        print(count)
         #weightsname='SampleCoords/'+str(count)+'NumWalkersWeights'+str(number)
         #np.save(weightsname, weights)
         #print(weights)
