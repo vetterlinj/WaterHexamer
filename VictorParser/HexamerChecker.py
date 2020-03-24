@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from VictorParser.loadnpz import *
-coords, weights, metadata=concatenatenpz('PythonData/')
+coords, weights, metadata=concatenatenpz('NickFiles/VictorData/h2o6_book/PythonData/')
 oxygen=[coords[:,0,:],coords[:,3,:],coords[:,6,:],coords[:,9,:],coords[:,12,:],coords[:,15,:]]
 #Oxygen is (6,walkers,3)
 h1=[coords[:,1,:],coords[:,4,:],coords[:,7,:],coords[:,10,:],coords[:,13,:],coords[:,16,:]]
@@ -14,10 +14,21 @@ roh1=np.sqrt(np.sum(roh1,2))
 #roh is (6,walkers)
 roh2=np.square(oxygen-h2)
 roh2=np.sqrt(np.sum(roh2,2))
-amp,xx=np.histogram(roh1[0,:],bins=50,range=(1.25,2.5),density=True, weights=weights.T)
+amp,xx=np.histogram(roh1[0,:],bins=58,range=(1,3),density=True, weights=weights.T)
 xx = 0.5*(xx[1:] + xx[:-1])
-plt.plot(xx,amp)
-plt.show()
+amp2,xx2=np.histogram(roh2[0,:],bins=58,range=(1,3),density=True, weights=weights.T)
+xx2 = 0.5*(xx2[1:] + xx2[:-1])
+
+# checkfile = np.loadtxt("NickFiles/VictorData/h2o6_book/book_roh_check.dat")
+# checkfile = np.array(checkfile)
+# checkamp=checkfile[:,1]
+# checkxx=checkfile[:,0]
+
+plt.plot(xx,amp,label='H1')
+plt.plot(xx2,amp2, label='H2')
+# plt.plot(checkxx,checkamp,label='Victor')
+plt.legend()
+plt.savefig('NickFiles/VictorData/h2o6_book/Oxygen1.png')
 
 
 #amp, xx = np.histogram(...)

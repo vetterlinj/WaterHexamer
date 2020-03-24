@@ -16,16 +16,17 @@ read_float_block = lambda data, nblocks: np.frombuffer(data.read(8*nblocks), dty
 #REMEMBER TO USE ADDITIONAL LINE BELOW
 #files=['h2o6_prism','d2o6_prism','d2o6_cage','h2o6_cage']
 #'d2o6_prism','d2o6_cage','h2o6_prism','h2o6_cage',
-files=['sample']
+#files=['sample']
+files=['h2o6_book']
 #numberofsets=1
 
 #numbersum=0
 for file in files:
     count = 0
-    # data = open(f"NickFiles/VictorData/{file}/{file}_coords.dat", "rb")
-    # weightfile = open(f"NickFiles/VictorData/{file}/{file}_weight.dat", "r")
-    data = open(f"{file}_coords.dat", "rb")
-    weightfile = open(f"{file}_weight.dat", "r")
+    data = open(f"NickFiles/VictorData/{file}/{file}_coords.dat", "rb")
+    weightfile = open(f"NickFiles/VictorData/{file}/{file}_weight.dat", "r")
+    #data = open(f"{file}_coords.dat", "rb")
+    #weightfile = open(f"{file}_weight.dat", "r")
     skip_ws(data)
     numberofsets = read_int(data)
     print(file)
@@ -79,8 +80,8 @@ for file in files:
         paddednumber=str(count).zfill(3)
 
 #        numbersum=numbersum+number
-        np.savez(f'PythonData/{file}{paddednumber}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers)
-#        np.savez(f'NickFiles/VictorData/{file}/PythonData/{file}{paddednumber}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers)
+        #np.savez(f'PythonData/{file}{paddednumber}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers)
+        np.savez(f'NickFiles/VictorData/{file}/PythonData/{file}{paddednumber}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers)
         print(count)
         #weightsname='SampleCoords/'+str(count)+'NumWalkersWeights'+str(number)
         #np.save(weightsname, weights)
