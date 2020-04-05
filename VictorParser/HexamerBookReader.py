@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from VictorParser.loadnpz import *
-#coords, weights, metadata=concatenatenpz('NickFiles/VictorData/h2o6_book/PythonData/')
-coords, weights, metadata=concatenatenpz('h2o6_bookPythonData/')
+coords, weights, metadata=concatenatenpz('NickFiles/VictorData/h2o6_book/PythonData/')
+#coords, weights, metadata=concatenatenpz('h2o6_bookPythonData/')
 oranges=len(weights)
 
 def oxygendistance(walkercoords):
@@ -111,7 +111,7 @@ for a in np.arange(0,oranges):
     c2=candidates[1]
     # print(coords[a])
     theone, theonehydrogen=whichisitthough(coords[a],c1,c2)
-    print(f"the first water is {theone}")
+    #print(f"the first water is {theone}")
     #swaps the 0th row with what we want to be oxygen 0
     coords[a][[0,theone]] = coords[a][[theone,0]]
     #ensures that the second hydrogen (coords[2]) is the one pointing to the middle, so that hydrogen 1 points to the next oxygen in the cycle.
@@ -125,7 +125,7 @@ for a in np.arange(0,oranges):
         nextoxygen, changehydrogen=whichoxygenisnext(coords[a],w)
         if changehydrogen==2 and w!=0:
             coords[a][[w+1, w+2]] = coords[a][[w+2, w+1]]
-        print(f"the current water is {w} and the next water is {nextoxygen}")
+        #print(f"the current water is {w} and the next water is {nextoxygen}")
         if nextoxygen < w:
             print('problem: switching with locked in waters')
             print(a)
@@ -144,6 +144,14 @@ for a in np.arange(0,oranges):
 
     if changehydrogen == 2:
         coords[a][[lastw + 1, lastw + 2]] = coords[a][[lastw + 1, lastw + 2]]
-    print('layercomplete')
+    #print('layercomplete')
+    print(a)
 print(problems)
+reversedProblems=problems[::-1]
 #[43, 45, 437, 527, 679, 805, 895, 1024, 1241, 1487, 2284, 2305, 2347, 2416, 3233, 3342, 3601, 3966, 4099, 4165, 5343, 5364, 5791, 6013, 8748, 8787, 9102, 9199, 9353, 9450, 10275, 10707, 10890, 11000, 11284, 11885, 12103, 12335, 13517, 13584, 13600, 14158, 14234, 14506, 16571, 17439, 17923, 18022, 18203, 18308, 18397, 18510, 18529, 18963, 18998, 19029, 20885, 21201, 21477, 23427, 24133, 24187, 24876, 25044, 25993, 26408, 26971, 27788, 28362, 31347, 31487, 32930, 33829, 34008, 36096, 37367, 37781, 38881, 40454, 41164, 41167, 43795, 48807, 49378]
+
+newcoords=coords
+for problem in reversedProblems:
+    newcoords = np.delete(newcoords, problem, 0)
+    weights = np.delete(weights, problem)
+np.savez('NickFiles/VictorData/h2o6_book/SortedWithoutProblems',coords=newcoords,weights=weights,metadata=metadata,problems=problems)
