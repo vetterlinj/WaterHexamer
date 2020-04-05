@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from VictorParser.loadnpz import *
 #coords, weights, metadata=concatenatenpz('NickFiles/VictorData/h2o6_book/PythonData/')
 coords, weights, metadata=concatenatenpz('h2o6_bookPythonData/')
+oranges=len(weights)
+
 def oxygendistance(walkercoords):
     water=np.arange(0,6)*3
     distances=np.zeros((6,6))
@@ -100,13 +102,11 @@ def initialoxygen(coords):
     # print(roh2)
     # print('this is an orange')
     return [12,0]
+problems=[]
+for a in np.arange(0,oranges):
 
-for a in np.arange(43,1000):
-    print(coords[a]*0.529177249)
-    exit()
-    # candidates=oxygendistance(coords[a])
-    candidates=initialoxygen(coords[a])
-    exit()
+    candidates=oxygendistance(coords[a])
+    # candidates=initialoxygen(coords[a])
     c1=candidates[0]
     c2=candidates[1]
     # print(coords[a])
@@ -130,7 +130,8 @@ for a in np.arange(43,1000):
             print('problem: switching with locked in waters')
             print(a)
             print(w)
-            exit()
+            problems.append(a)
+            break
         coords[a][[w+3, nextoxygen]] = coords[a][[nextoxygen, w+3]]
         coords[a][[w + 4, nextoxygen+1]] = coords[a][[nextoxygen+1, w + 4]]
         coords[a][[w + 5, nextoxygen+2]] = coords[a][[nextoxygen+2, w + 5]]
@@ -140,7 +141,9 @@ for a in np.arange(43,1000):
         print('Problem: cycle is incomplete')
         print(a)
         print(lastw)
-        exit()
+
     if changehydrogen == 2:
         coords[a][[lastw + 1, lastw + 2]] = coords[a][[lastw + 1, lastw + 2]]
     print('layercomplete')
+print(problems)
+#[43, 45, 437, 527, 679, 805, 895, 1024, 1241, 1487, 2284, 2305, 2347, 2416, 3233, 3342, 3601, 3966, 4099, 4165, 5343, 5364, 5791, 6013, 8748, 8787, 9102, 9199, 9353, 9450, 10275, 10707, 10890, 11000, 11284, 11885, 12103, 12335, 13517, 13584, 13600, 14158, 14234, 14506, 16571, 17439, 17923, 18022, 18203, 18308, 18397, 18510, 18529, 18963, 18998, 19029, 20885, 21201, 21477, 23427, 24133, 24187, 24876, 25044, 25993, 26408, 26971, 27788, 28362, 31347, 31487, 32930, 33829, 34008, 36096, 37367, 37781, 38881, 40454, 41164, 41167, 43795, 48807, 49378]
