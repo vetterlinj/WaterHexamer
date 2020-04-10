@@ -1,10 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from VictorParser.loadnpz import *
-coords, weights, metadata=concatenatenpz('NickFiles/VictorData/h2o6_book/PythonData/')
-#coords, weights, metadata=concatenatenpz('h2o6_bookPythonData/')
+#coords, weights, metadata=concatenatenpz('NickFiles/VictorData/h2o6_book/PythonData/')
+coords, weights, metadata=concatenatenpz('h2o6_bookPythonData/')
 oranges=len(weights)
-
 def oxygendistance(walkercoords):
     water=np.arange(0,6)*3
     distances=np.zeros((6,6))
