@@ -56,7 +56,7 @@ def whichisfurthest(coords,candidates):
     hydrogendistances=np.array(hydrogendistances)
     oranges=np.argsort(hydrogendistances[:,1])
     return candidates[oranges[-1]]
-def whichisnextwater(walkercoords,currentwater,checkingtool):
+def whichisnextwater(walkercoords,currentwater):
     water = np.arange(0, 6) * 3
     list=[]
     for i in water:
@@ -67,10 +67,10 @@ def whichisnextwater(walkercoords,currentwater,checkingtool):
     coords[a][[nextwater, tradewater]] = coords[a][[tradewater, nextwater]]
     coords[a][[nextwater+1, tradewater+1]] = coords[a][[tradewater+1, nextwater+1]]
     coords[a][[nextwater + 2, tradewater + 2]] = coords[a][[tradewater + 2, nextwater + 2]]
-    checkingtool[np.int(tradewater/3)]=np.int(nextwater/3)
-    checkingtool[np.int(nextwater/3)]=np.int(tradewater/3)
-    print(checkingtool)
-    return tradewater,checkingtool
+    # checkingtool[np.int(tradewater/3)]=np.int(nextwater/3)
+    # checkingtool[np.int(nextwater/3)]=np.int(tradewater/3)
+    # print(checkingtool)
+    return tradewater
 def doublewatertime(walkercoords, currentwater):
     water = np.arange(0, 6) * 3
     listh1=[]
@@ -83,9 +83,27 @@ def doublewatertime(walkercoords, currentwater):
     return sorth1*3,sorth2*3
 
 for a in np.arange(0,1):
-    checkingtool=np.arange(0,6)
+    # checkingtool=np.arange(0,6)
+    #gives 0,5,17 as possible candidates for hydrogens, works
     candidates=freeHydrogenCandidates(coords[a])
     hydrogenZero=whichisfurthest(coords[a],candidates)
+    checker=[]
+    for candidate in candidates:
+        if np.int(hydrogenZero)==candidate:
+            zzzcandidate=candidate
+        else:
+            # checker.append(coords[a][candidate])
+            checker.append(candidate)
+    checkeyecker=[]
+    for i in checker:
+        if i %3==1:
+            checkeyecker.append(i-1)
+        elif i%3==2:
+            checkeyecker.append(i-2)
+        else:
+            print('this should be a 1 or 2, not a whater?')
+    firstcheck=np.copy(coords[a][checkeyecker[0]])
+    secondcheck=np.copy(coords[a][checkeyecker[1]])
     #Check hydrogen zero is in the second slot:
     if (hydrogenZero-1)%3==0:
         coords[a][[hydrogenZero, hydrogenZero + 1]] = coords[a][[hydrogenZero + 1, hydrogenZero]]
@@ -94,13 +112,20 @@ for a in np.arange(0,1):
         coords[a][[0, hydrogenZero -2]] = coords[a][[hydrogenZero -2, 0]]
         coords[a][[1, hydrogenZero - 1]] = coords[a][[hydrogenZero - 1, 1]]
         coords[a][[2, hydrogenZero]] = coords[a][[hydrogenZero, 2]]
-        checkingtool[0]=np.int((hydrogenZero-2)/3)
-        checkingtool[np.int((hydrogenZero-2)/3)]=0
-        print(checkingtool)
-    nextwater,checkingtool=whichisnextwater(coords[a], 0,checkingtool)
+        # checkingtool[0]=np.int((hydrogenZero-2)/3)
+        # checkingtool[np.int((hydrogenZero-2)/3)]=0
+        # print(checkingtool)
+    nextwater=whichisnextwater(coords[a], 0)
     nearh1,nearh2 = doublewatertime(coords[a], nextwater)
-    print(nearh1/3)
-    print(nearh2/3)
-    print(candidates)
+    #-2.71,0.38,3.09 and -4.122,0.78,-2.06
+    if coords[a][np.int(nearh1)].all()!=firstcheck.all() and coords[a][np.int(nearh1)].all!=secondcheck.all():
+        print('problem in waters')
+        print(a)
+        exit()
+    if coords[a][np.int(nearh1)].all() != firstcheck.all() and coords[a][np.int(nearh1)].all != secondcheck.all():
+        print('problem in waters')
+        print(a)
+        print('a')
+        exit()
 
 
