@@ -64,9 +64,9 @@ def whichisnextwater(walkercoords,currentwater):
     sort=np.argsort(list)[1]
     nextwater=sort*3
     tradewater=currentwater+3
-    coords[a][[nextwater, tradewater]] = coords[a][[tradewater, nextwater]]
-    coords[a][[nextwater+1, tradewater+1]] = coords[a][[tradewater+1, nextwater+1]]
-    coords[a][[nextwater + 2, tradewater + 2]] = coords[a][[tradewater + 2, nextwater + 2]]
+    # coords[a][[nextwater, tradewater]] = coords[a][[tradewater, nextwater]]
+    # coords[a][[nextwater+1, tradewater+1]] = coords[a][[tradewater+1, nextwater+1]]
+    # coords[a][[nextwater + 2, tradewater + 2]] = coords[a][[tradewater + 2, nextwater + 2]]
     # checkingtool[np.int(tradewater/3)]=np.int(nextwater/3)
     # checkingtool[np.int(nextwater/3)]=np.int(tradewater/3)
     # print(checkingtool)
@@ -81,10 +81,50 @@ def doublewatertime(walkercoords, currentwater):
     sorth1=np.argsort(listh1)[1]
     sorth2=np.argsort(listh2)[1]
     return sorth1*3,sorth2*3
+def whichpointsattheother(walkercoords, waterone, watertwo):
+    water = np.arange(0, 6) * 3
+    listh1=[]
+    listh2=[]
+    listh3=[]
+    listh4=[]
+    for i in water:
+        listh1.append(np.sqrt(np.sum(np.square(walkercoords[waterone+1]-walkercoords[i]))))
+        listh2.append(np.sqrt(np.sum(np.square(walkercoords[waterone + 2] - walkercoords[i]))))
+        listh3.append(np.sqrt(np.sum(np.square(walkercoords[watertwo+1]-walkercoords[i]))))
+        listh4.append(np.sqrt(np.sum(np.square(walkercoords[watertwo + 2] - walkercoords[i]))))
+    sorth1=np.argsort(listh1)[1]
+    sorth2=np.argsort(listh2)[1]
+    if listh1[sorth1] < listh2[sorth2]:
+        pointerfirst=sorth1
+        firsthydrogenpointing=1
+    if listh2[sorth2]<listh1[sorth1]:
+        pointerfirst=sorth2
+        firsthydrogenpointing=2
+    sorth3=np.argsort(listh3)[1]
+    sorth4 = np.argsort(listh4)[1]
+    if listh3[sorth3] < listh4[sorth4]:
+        pointersecond=sorth3
+        secondhydrogenpointing=1
+    if listh4[sorth4]<listh3[sorth3]:
+        pointersecond=sorth4
+        secondhydrogenpointing=2
+    if pointerfirst*3==watertwo:
+        return waterone, watertwo, firsthydrogenpointing,secondhydrogenpointing
+    elif pointersecond*3==waterone:
+        return watertwo,waterone, secondhydrogenpointing,firsthydrogenpointing
+    else:
+        print('oh no sad')
+        exit()
+def watertrader(walkercoords, currentwater, watertotrade, hydrogenpointer):
+    walkercoords[[currentwater, watertotrade]] = walkercoords[[watertotrade, currentwater]]
+    walkercoords[[currentwater+1, watertotrade+hydrogenpointer]] = walkercoords[[watertotrade+hydrogenpointer, currentwater+1]]
+    if hydrogenpointer ==1:
+        walkercoords[[currentwater+2, watertotrade+2]] = walkercoords[[watertotrade+2, currentwater+2]]
+    elif hydrogenpointer ==2:
+        walkercoords[[currentwater+2, watertotrade+1]] = walkercoords[[watertotrade+1, currentwater+2]]
+    return walkercoords
 
 for a in np.arange(0,1):
-    # checkingtool=np.arange(0,6)
-    #gives 0,5,17 as possible candidates for hydrogens, works
     candidates=freeHydrogenCandidates(coords[a])
     hydrogenZero=whichisfurthest(coords[a],candidates)
     checker=[]
@@ -116,16 +156,39 @@ for a in np.arange(0,1):
         # checkingtool[np.int((hydrogenZero-2)/3)]=0
         # print(checkingtool)
     nextwater=whichisnextwater(coords[a], 0)
+    if nextwater != 3:
+        hydrogenpointer=1
+        #THISMUSTBEFIXED
+        coords[a]=watertrader(coords[a],3,nextwater,hydrogenpointer)
+        nextwater=3
     nearh1,nearh2 = doublewatertime(coords[a], nextwater)
-    #-2.71,0.38,3.09 and -4.122,0.78,-2.06
     if coords[a][np.int(nearh1)].all()!=firstcheck.all() and coords[a][np.int(nearh1)].all!=secondcheck.all():
         print('problem in waters')
         print(a)
         exit()
-    if coords[a][np.int(nearh1)].all() != firstcheck.all() and coords[a][np.int(nearh1)].all != secondcheck.all():
+    if coords[a][np.int(nearh2)].all() != firstcheck.all() and coords[a][np.int(nearh2)].all != secondcheck.all():
         print('problem in waters')
         print(a)
         print('a')
         exit()
-
+    firstwater,secondwater, firstpointer, secondpointer = whichpointsattheother(coords[a],nearh1,nearh2)
+    #keeptrackusingnearh1
+    nextwater=nextwater+3
+    coords[a]=watertrader(coords[a],nextwater,firstwater,firstpointer)
+    nextwater=nextwater+3
+    coords[a]=watertrader(coords[a],nextwater,secondwater,secondpointer)
+    nextwater=nextwater+3
+    firstwater=whichisnextwater(coords[a],9)
+    coords[a]=watertrader(coords[a],nextwater,firstwater,1)
+    nearh1,nearh2 = doublewatertime(coords[a], nextwater)
+    if coords[a][np.int(nearh1)].all()!=coords[a][0].all() and coords[a][np.int(nearh1)].all!=coords[a][15].all():
+        print('problem in waters')
+        print(a)
+        exit()
+    if coords[a][np.int(nearh2)].all() != coords[a][0].all() and coords[a][np.int(nearh2)].all != coords[a][15].all():
+        print('problem in waters')
+        print(a)
+        print('a')
+        exit()
+    print('layercompletefornow')
 
