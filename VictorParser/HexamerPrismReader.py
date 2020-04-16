@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from VictorParser.loadnpz import *
 #coords, weights, metadata=concatenatenpz('NickFiles/VictorData/h2o6_book/PythonData/')
-coords, weights, metadata=concatenatenpz('h2o6_prismPythonData/')
+coords, weights, metadata=concatenatenpz('h2o5_d2o_prismPythonData/')
 
 def freeHydrogenCandidates(coords):
     #find  OH distances, determine which are shortest
@@ -63,14 +63,15 @@ def whichisnextwater(walkercoords,currentwater):
         list.append(np.sqrt(np.sum(np.square(walkercoords[currentwater+1]-walkercoords[i]))))
     sort=np.argsort(list)[1]
     nextwater=sort*3
-    tradewater=currentwater+3
+    #works until here at least
+    # tradewater=currentwater+3
     # coords[a][[nextwater, tradewater]] = coords[a][[tradewater, nextwater]]
     # coords[a][[nextwater+1, tradewater+1]] = coords[a][[tradewater+1, nextwater+1]]
     # coords[a][[nextwater + 2, tradewater + 2]] = coords[a][[tradewater + 2, nextwater + 2]]
     # checkingtool[np.int(tradewater/3)]=np.int(nextwater/3)
     # checkingtool[np.int(nextwater/3)]=np.int(tradewater/3)
     # print(checkingtool)
-    return tradewater
+    return nextwater
 def doublewatertime(walkercoords, currentwater):
     water = np.arange(0, 6) * 3
     listh1=[]
@@ -109,12 +110,17 @@ def whichpointsattheother(walkercoords, waterone, watertwo):
         pointersecond=sorth4
         secondhydrogenpointing=2
     if pointerfirst*3==watertwo:
+        issueweights.append(1)
         return waterone, watertwo, firsthydrogenpointing,secondhydrogenpointing
     elif pointersecond*3==waterone:
+        issueweights.append(1)
         return watertwo,waterone, secondhydrogenpointing,firsthydrogenpointing
     else:
         print('oh no sad')
-        exit()
+        print(f'skipping {a}')
+        issues.append(a)
+        issueweights.append(0)
+        return watertwo,waterone, secondhydrogenpointing,firsthydrogenpointing
 def watertrader(walkercoords, currentwater, watertotrade, hydrogenpointer):
     walkercoords[[currentwater, watertotrade]] = walkercoords[[watertotrade, currentwater]]
     walkercoords[[currentwater+1, watertotrade+hydrogenpointer]] = walkercoords[[watertotrade+hydrogenpointer, currentwater+1]]
@@ -123,8 +129,14 @@ def watertrader(walkercoords, currentwater, watertotrade, hydrogenpointer):
     elif hydrogenpointer ==2:
         walkercoords[[currentwater+2, watertotrade+1]] = walkercoords[[watertotrade+1, currentwater+2]]
     return walkercoords
-
-for a in np.arange(0,1):
+issues=[]
+issueweights=[]
+d2o=True
+if d2o==True:
+    d2oposition=[]
+for a in np.arange(0,len(weights)):
+    if d2o==True:
+        d2ocoords=np.copy(coords[a][15])
     candidates=freeHydrogenCandidates(coords[a])
     hydrogenZero=whichisfurthest(coords[a],candidates)
     checker=[]
@@ -190,5 +202,61 @@ for a in np.arange(0,1):
         print(a)
         print('a')
         exit()
+    # print(coords[a])
+    if d2o==True:
+        for b in np.arange(0,6):
+            if sum(d2ocoords - coords[a][b*3])==0:
+                d2oposition.append(b)
     print('layercompletefornow')
-
+    print(a)
+# print(len(issues))
+# print(len(issueweights))
+sum=0
+totalsum=0
+for a in np.arange(0,len(issueweights)):
+    sum=sum+(issueweights[a]*weights[a])
+    totalsum=totalsum+weights[a]
+print(sum/totalsum)
+print(1-(sum/totalsum))
+print(totalsum)
+if d2o==True:
+    adjustedd2oposition=[]
+    for a in np.arange(0,len(d2oposition)):
+        if issueweights[a]==0:
+            adjustedd2oposition.append(8)
+        else:
+            adjustedd2oposition.append(d2oposition[a])
+    print(d2oposition)
+    print(issueweights)
+    print(adjustedd2oposition)
+    range0=0
+    range1=0
+    range2=0
+    range3=0
+    range4=0
+    range5=0
+    range8=0
+    for a in np.arange(0,len(adjustedd2oposition)):
+        if adjustedd2oposition[a]==0:
+            range0=range0+weights[a]
+        elif adjustedd2oposition[a]==1:
+            range1=range1+weights[a]
+        elif adjustedd2oposition[a]==2:
+            range2=range2+weights[a]
+        elif adjustedd2oposition[a]==3:
+            range3=range3+weights[a]
+        elif adjustedd2oposition[a]==4:
+            range4=range4+weights[a]
+        elif adjustedd2oposition[a]==5:
+            range5=range5+weights[a]
+        elif adjustedd2oposition[a]==8:
+            range8=range8+weights[a]
+    print('weightpercentage0-5:')
+    print(range0/totalsum)
+    print(range1/totalsum)
+    print(range2/totalsum)
+    print(range3/totalsum)
+    print(range4/totalsum)
+    print(range5/totalsum)
+    print('unquantifiable:')
+    print(range8/totalsum)
