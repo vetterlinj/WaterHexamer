@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from VictorParser.loadnpz import *
 #coords, weights, metadata=concatenatenpz('NickFiles/VictorData/h2o6_book/PythonData/')
-coords, weights, metadata=concatenatenpz('h2o5_d2o_prismPythonData/')
-
+# coords, weights, metadata=concatenatenpz('h2o5_d2o_prismPythonData/')
+coords, weights, metadata=concatenatenpz('h2o6_prismPythonData/')
 def freeHydrogenCandidates(coords):
     #find  OH distances, determine which are shortest
     oxygen = [coords[0, :], coords[3, :], coords[6, :], coords[9, :], coords[12, :], coords[15, :]]
@@ -134,7 +134,10 @@ issueweights=[]
 d2o=True
 if d2o==True:
     d2oposition=[]
-for a in np.arange(0,len(weights)):
+for a in np.arange(7,len(weights)):
+    print(coords[a]*0.529177)
+    print(weights[a])
+
     if d2o==True:
         d2ocoords=np.copy(coords[a][15])
     candidates=freeHydrogenCandidates(coords[a])
@@ -207,7 +210,7 @@ for a in np.arange(0,len(weights)):
         for b in np.arange(0,6):
             if sum(d2ocoords - coords[a][b*3])==0:
                 d2oposition.append(b)
-    print('layercompletefornow')
+    # print('layercompletefornow')
     print(a)
 # print(len(issues))
 # print(len(issueweights))
