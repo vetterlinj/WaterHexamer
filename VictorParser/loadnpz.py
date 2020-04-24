@@ -35,3 +35,27 @@ def concatenatenpz(path):
     weights = np.array(weights)
     metadata=np.array(metadata)
     return wavefunctions, weights, metadata
+
+def writeMeAnXYZFile(walkercoords, filename, deuteriumPosition):
+    coordsfile=open(filename,"w")
+    coordsfile.write("18\nRandom Prism Structure\n")
+    walkercoords=walkercoords*0.529177
+    for oranges in np.arange(0,6):
+        oranges=oranges*3
+        if oranges==deuteriumPosition:
+            coordsfile.write(str("O     "+str(walkercoords[oranges,0])+"     "+str(walkercoords[oranges,1])+"     "+str(walkercoords[oranges,2])+"\n"))
+            coordsfile.write(str(
+                "D     " + str(walkercoords[oranges+1, 0]) + "     " + str(walkercoords[oranges+1, 1]) + "     " + str(
+                    walkercoords[oranges+1, 2]) + "\n"))
+            coordsfile.write(str(
+                "D     " + str(walkercoords[oranges+2, 0]) + "     " + str(walkercoords[oranges+2, 1]) + "     " + str(
+                    walkercoords[oranges+2, 2]) + "\n"))
+        else:
+            coordsfile.write(str("O     "+str(walkercoords[oranges,0])+"     "+str(walkercoords[oranges,1])+"     "+str(walkercoords[oranges,2])+"\n"))
+            coordsfile.write(str(
+                "H     " + str(walkercoords[oranges+1, 0]) + "     " + str(walkercoords[oranges+1, 1]) + "     " + str(
+                    walkercoords[oranges+1, 2]) + "\n"))
+            coordsfile.write(str(
+                "H     " + str(walkercoords[oranges+2, 0]) + "     " + str(walkercoords[oranges+2, 1]) + "     " + str(
+                    walkercoords[oranges+2, 2]) + "\n"))
+    coordsfile.close()

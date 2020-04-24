@@ -30,8 +30,8 @@ def DeuteriumChecker(coords):
         return sorted[3],red
     else:
         return sorted[3],blue
-
-f=open('simulation1Broken/optimized_sim1_coords.dat','r')
+path='h2o5_d2o_prismPythonData/Uncategorized/minimum6_wfns/h2o5_d2o_prism_unclassified_sim6.dat'
+f=open(path,'r')
 weird=[]
 eight=[]
 coords=[]
@@ -72,7 +72,7 @@ count2=0
 #         print(i)
 # print(count/np.int(weird[0][0]))
 # print(count2)
-np.savez('simulation1Broken/PythonData/data',coords=coords,origin=origin)
+np.savez('h2o5_d2o_prismPythonData/Uncategorized/minimum6_wfns/PythonData/uncategorized',coords=coords,origin=origin)
 
 
 
