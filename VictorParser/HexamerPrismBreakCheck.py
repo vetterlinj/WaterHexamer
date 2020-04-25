@@ -1,11 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from VictorParser.loadnpz import *
-path='h2o5_d2o_prismPythonData/Uncategorized/minimum6_wfns/PythonData/'
+simulation=6
+path=f'h2o5_d2o_prismPythonData/Uncategorized/minimum{simulation}_wfns/PythonData/'
 dataname='uncategorized.npz'
 data = np.load(path+dataname)
 # make a large matrix
 coords =data['coords']
+# for i in np.arange(0,6):
+#     writeMeAnXYZFile(coords[0], path + f'simulation{simulation}_{i}.xyz', 15)
+# writeMeAnXYZFile(coords[0],path+'simulation3.xyz',15)
+# exit()
 def whichwaterpointer(walkercoords,currentHydrogen):
     water = np.arange(0, 6) * 3
     list=[]
@@ -34,15 +39,62 @@ def watertrader(walkercoords, currentwater, watertotrade, hydrogenpointer):
     return walkercoords
 def checkdistance(walkercoords,particleOne,particleTwo):
     return np.sqrt(np.sum(np.square(walkercoords[particleOne]-walkercoords[particleTwo])))*0.529177
-waterzero=15
-waterone=6
-watertwo=3
-waterthree=0
-waterfour=9
-waterfive=12
-#deuterium is 15>0
+if simulation==6:
+    waterzero=12
+    waterone=3
+    watertwo=0
+    waterthree=15
+    waterfour=6
+    waterfive=9
+    deuterium=3
+    length=27981
+if simulation==5:
+    waterzero=12
+    waterone=3
+    watertwo=15
+    waterthree=0
+    waterfour=6
+    waterfive=9
+    deuterium=2
+    length=72582
+if simulation==4:
+    waterzero=12
+    waterone=15
+    watertwo=3
+    waterthree=0
+    waterfour=6
+    waterfive=9
+    deuterium=1
+    length=24669
+if simulation==3:
+    waterzero=15
+    waterone=6
+    watertwo=3
+    waterthree=0
+    waterfour=9
+    waterfive=12
+    deuterium=0
+    length=56242
+if simulation==2:
+    waterzero=12
+    waterone=6
+    watertwo=3
+    waterthree=0
+    waterfour=9
+    waterfive=15
+    deuterium=5
+    length=65029
+if simulation==1:
+    waterzero=12
+    waterone=6
+    watertwo=3
+    waterthree=0
+    waterfour=15
+    waterfive=9
+    deuterium=4
+    length=65842
 waterlist=[waterzero,waterone,watertwo,waterthree,waterfour,waterfive]
-frencharray=np.zeros((56242,18,3))
+frencharray=np.zeros((length, 18, 3))
 valuecounter=0
 for b in waterlist:
     for c in np.arange(0,3):
@@ -50,7 +102,6 @@ for b in waterlist:
         valuecounter=valuecounter+1
 frencharray=np.array(frencharray)
 coords=frencharray
-
 results={
 'oneToThreeCount':0,
 'fourToSixCount':0,
@@ -63,7 +114,7 @@ results={
 'seventeenToSixCount':0,
 'confusedCount':0}
 resultsFile=open(path+"Results.txt",'w')
-for a in np.arange(0,56242):
+for a in np.arange(0,length):
     weight=1
     for b in np.arange(0,6):
         b=b*3
@@ -129,6 +180,7 @@ for a in np.arange(0,56242):
 totalcount=sum(results.values())
 # totalcount=oneToThreeCount+fourToSixCount+fiveToNineCount+sevenToNineCount+tenToTwelveCount+thirteenToFifteenCount+fourteenToZeroCount+sixteenToZeroCount+seventeenToSixCount+confusedCount
 print(totalcount)
+resultsFile.write('Deuterium Position is: '+str(deuterium)+"\n")
 for name,value in results.items():
     resultsFile.write(name+"\n")
     resultsFile.write(str(value/totalcount)+"\n")
