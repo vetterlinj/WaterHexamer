@@ -16,6 +16,7 @@ def concatenatenpz(path):
     wavefunctions=np.empty([0,18,3], float)
     weights=[]
     metadata=[]
+    tracing=[]
     filepaths=loadnpz(path)
     for file in filepaths:
         data = np.load(file)
@@ -32,9 +33,11 @@ def concatenatenpz(path):
         #keep track of metadata matrix?
         filemetadata=[data['NumWalkers'],data['InitialWalkers'],data['time']]
         metadata.append(filemetadata)
+        tracing.append(data['Size'])
     weights = np.array(weights)
     metadata=np.array(metadata)
-    return wavefunctions, weights, metadata
+    tracing=np.array(tracing)
+    return wavefunctions, weights, metadata, tracing
 
 def writeMeAnXYZFile(walkercoords, filename, deuteriumPosition):
     coordsfile=open(filename,"w")
