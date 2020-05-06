@@ -24,12 +24,14 @@ files=['h2o6_book']
 #     count = 0
     # data = open(f"NickFiles/VictorData/{file}/{file}_coords.dat", "rb")
     # weightfile = open(f"NickFiles/VictorData/{file}/{file}_weight.dat", "r")
-for simulation in np.arange(1, 6):
+for simulation in np.arange(1, 2):
     count=0
-    path = f'h2o_d2o5_prism/minimum{simulation}_wfns/'
-    dataname = f'h2o_d2o5_prism_coords_min{simulation}.dat'
+    dataname='d2o6_prism_coords.dat'
+    path = f'd2o6_prism/'
+    # path = f'h2o_d2o5_prism/minimum{simulation}_wfns/'
+    # dataname = f'h2o_d2o5_prism_coords_min{simulation}.dat'
     data = open(path+dataname, "rb")
-    weightfile = open(path+f"h2o_d2o5_prism_weights_min{simulation}.dat", "r")
+    weightfile = open(path+f"d2o6_prism_weight.dat", "r")
     #data = open(f"{file}_coords.dat", "rb")
     #weightfile = open(f"{file}_weight.dat", "r")
     skip_ws(data)
@@ -88,7 +90,7 @@ for simulation in np.arange(1, 6):
         paddednumber=str(count).zfill(3)
 #        numbersum=numbersum+number
         #np.savez(f'PythonData/{file}{paddednumber}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers)
-        np.savez(path+f'PythonData/FullDataset/Simulation{simulation}File{paddednumber}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers,Size=number)
+        np.savez(path+f'PythonData/FullDataset/d2o6PrismFile{paddednumber}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers,Size=number)
         print(count)
         #weightsname='SampleCoords/'+str(count)+'NumWalkersWeights'+str(number)
         #np.save(weightsname, weights)
