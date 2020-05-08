@@ -9,11 +9,11 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
     # # make a large matrix
     # coords = data['coords']
     # origins = data['origin']
-
+    counter=0
 
     # for i in np.arange(0,6):
     #     writeMeAnXYZFile(coords[0], path + f'simulation{simulation}_{i}.xyz', 15)
-    # writeMeAnXYZFile(coords[0],path+'simulationDeuterium.xyz',18)
+    # writeMeAnXYZFile(coords[0],path+f'{simulation}MostlyD.xyz',15)
     # exit()
     def whichwaterpointer(walkercoords, currentHydrogen):
         water = np.arange(0, 6) * 3
@@ -69,7 +69,7 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
         waterfive = 9
         deuterium = 3
         length = coords.shape[0]
-    elif simulation == 5 or (simulation == 3 and mostlyD == True):
+    elif (simulation == 5 and mostlyD==False) or (simulation == 3 and mostlyD == True):
         waterzero = 12
         waterone = 3
         watertwo = 15
@@ -148,7 +148,7 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
         'gAndHCorrelation':0,
         'sillyCheck':0}
 
-    resultsFile = open(path + "FullResults.txt", 'w')
+    resultsFile = open('Results/' + f"{dataname}_results", 'w')
     count = 0
     reference = []
     problemcount=0
@@ -169,8 +169,12 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
             'confusedCount': 0}
         for b in np.arange(0, 6):
             b = b * 3
-            if checkdistance(coords[a], b + 1, (b + 3) % 18) > checkdistance(coords[a], b + 2, (b + 3) % 18):
-                coords[a][[b + 1, b + 2]] = coords[a][[b + 2, b + 1]]
+            if b!=1:
+                if checkdistance(coords[a], b + 1, (b + 6) % 18) < checkdistance(coords[a], b + 2, (b + 6) % 18):
+                    coords[a][[b + 1, b + 2]] = coords[a][[b + 2, b + 1]]
+            else:
+                if checkdistance(coords[a], b + 1, (b + 3) % 18) > checkdistance(coords[a], b + 2, (b + 3) % 18):
+                    coords[a][[b + 1, b + 2]] = coords[a][[b + 2, b + 1]]
         if whichwaterpointer(coords[a], 1) != 3:
             results['oneToThreeCount'] += weight
             problemresults['oneToThreeCount'] += weight
@@ -256,6 +260,10 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
             results['quadplusCount']+= weight
         if problemresults['fiveToNineCount']>0 and problemresults['fourToSixCount']>0:
             results['cAndBCorrelation']+=weight
+            counter+=1
+            writeMeAnXYZFile(coords[a], path + f'{simulation}now{a}.xyz', 15)
+            if counter==5:
+                exit()
         if problemresults['fiveToNineCount']>0 and problemresults['fourteenToZeroCount']>0:
             results['cAndGCorrelation']+=weight
         if problemresults['fiveToNineCount']>0 and problemresults['seventeenToSixCount']>0:
@@ -290,7 +298,7 @@ for simulation in np.arange(1, 7):
     path=f'h2o5_d2o_prismPythonData/Uncategorized/minimum{simulation}_wfns/PythonData/'
     # path = f'h2o_d2o5_prism/minimum{simulation}_wfns/PythonData/'
     # path = f'h2o6_prism/PythonData/'
-    dataname = 'uncategorized.npz'
+    dataname = f'h2o5_d2o_prism_{simulation}'
     mostlyD = False
     allH=False
     bigOne(path,dataname,mostlyD,allH,simulation)
@@ -298,19 +306,19 @@ for simulation in np.arange(1, 6):
     #path=f'h2o5_d2o_prismPythonData/Uncategorized/minimum{simulation}_wfns/PythonData/'
     path = f'h2o_d2o5_prism/minimum{simulation}_wfns/PythonData/'
     # path = f'h2o6_prism/PythonData/'
-    dataname = 'uncategorized.npz'
+    dataname = f'h2o_d2o5_prism_{simulation}'
     mostlyD = True
     allH=False
     bigOne(path,dataname,mostlyD,allH,simulation)
 
 path = f'h2o6_prism/PythonData/'
-dataname = 'uncategorized.npz'
+dataname = 'h2o6_prism'
 mostlyD = False
 allH=True
 simulation=0
 bigOne(path,dataname,mostlyD,allH,simulation)
 path = f'd2o6_prism/PythonData/'
-dataname = 'uncategorized.npz'
+dataname = 'd2o6_prism'
 mostlyD = False
 allH=True
 bigOne(path,dataname,mostlyD,allH,simulation)

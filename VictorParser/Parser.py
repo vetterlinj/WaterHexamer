@@ -24,14 +24,18 @@ files=['h2o6_book']
 #     count = 0
     # data = open(f"NickFiles/VictorData/{file}/{file}_coords.dat", "rb")
     # weightfile = open(f"NickFiles/VictorData/{file}/{file}_weight.dat", "r")
+hasWeights=False
 for simulation in np.arange(1, 2):
     count=0
-    dataname='d2o6_prism_coords.dat'
-    path = f'd2o6_prism/'
+    # dataname='d2o6_prism_coords.dat'
+    # path = f'd2o6_prism/'
+    dataname='200k_walkers_wfn.dat'
+    path = f'Mark/'
     # path = f'h2o_d2o5_prism/minimum{simulation}_wfns/'
     # dataname = f'h2o_d2o5_prism_coords_min{simulation}.dat'
     data = open(path+dataname, "rb")
-    weightfile = open(path+f"d2o6_prism_weight.dat", "r")
+    if hasWeights==True:
+        weightfile = open(path+f"d2o6_prism_weight.dat", "r")
     #data = open(f"{file}_coords.dat", "rb")
     #weightfile = open(f"{file}_weight.dat", "r")
     skip_ws(data)
@@ -77,21 +81,27 @@ for simulation in np.arange(1, 2):
         # print(filename)
         #np.save(filename,newwfns)
         #Weights file:
-        weightfile.readline()
-        weights=[]
-        print('weightstime')
+        if hasWeights==True:
+            weightfile.readline()
+            weights=[]
+            print('weightstime')
         # if file == 'h2o6_prism':
         #     print('oranges')
-        for x in range(0, number):
-            weights.append(weightfile.readline())
-            weights[x] = weights[x].strip()
-            weights[x] = np.double(weights[x])
+            for x in range(0, number):
+                weights.append(weightfile.readline())
+                weights[x] = weights[x].strip()
+                weights[x] = np.double(weights[x])
 
         paddednumber=str(count).zfill(3)
 #        numbersum=numbersum+number
         #np.savez(f'PythonData/{file}{paddednumber}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers)
-        np.savez(path+f'PythonData/FullDataset/d2o6PrismFile{paddednumber}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers,Size=number)
-        print(count)
+        if hasWeights==False:
+            np.savez(path+f'PythonData/200k_walkers_wfn{paddednumber}',coords=newwfns,time=time,NumWalkers=number,InitialWalkers=initialwalkers,Size=number)
+            print(count)
+        if hasWeights==True:
+            np.savez(path + f'PythonData/FullDataset/Dataname{paddednumber}', coords=newwfns, weights=weights,
+                     time=time, NumWalkers=number, InitialWalkers=initialwalkers, Size=number)
+            print(count)
         #weightsname='SampleCoords/'+str(count)+'NumWalkersWeights'+str(number)
         #np.save(weightsname, weights)
         #print(weights)
