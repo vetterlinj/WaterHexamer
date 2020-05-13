@@ -261,9 +261,9 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
         if problemresults['fiveToNineCount']>0 and problemresults['fourToSixCount']>0:
             results['cAndBCorrelation']+=weight
             counter+=1
-            writeMeAnXYZFile(coords[a], path + f'{simulation}now{a}.xyz', 15)
-            if counter==5:
-                exit()
+            # writeMeAnXYZFile(coords[a], path + f'{simulation}now{a}.xyz', 15)
+            # if counter==5:
+            #     exit()
         if problemresults['fiveToNineCount']>0 and problemresults['fourteenToZeroCount']>0:
             results['cAndGCorrelation']+=weight
         if problemresults['fiveToNineCount']>0 and problemresults['seventeenToSixCount']>0:
