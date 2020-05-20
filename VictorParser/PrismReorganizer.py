@@ -12,6 +12,16 @@ def watertrader(walkercoords, currentwater, watertotrade, hydrogenpointer):
         walkercoords[[currentwater + 2, watertotrade + 1]] = walkercoords[[watertotrade + 1, currentwater + 2]]
     return walkercoords
 
+def singleatomtrader(walkercoords):
+    hydrogenzero = 0
+    hydrogenone = 1
+    hydrogentwo = 0
+    hydrogenthree = 0
+    hydrogenfour = 0
+    hydrogenfive = 1
+    walkercoords[:,[4, 5]] = walkercoords[:,[5, 4]]
+    walkercoords[:,[16, 17]] = walkercoords[:,[17, 16]]
+    return walkercoords
 
 def checkdistance(walkercoords, particleOne, particleTwo):
     return np.sqrt(np.sum(np.square(walkercoords[particleOne] - walkercoords[particleTwo]))) * 0.529177
@@ -82,6 +92,9 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
         deuterium = 4
         length = coords.shape[0]
     print('reorg')
+#    writeMeAnXYZFile(coords[1],path+dataname+'.xyz',deuterium)
+
+
     waterlist = [waterzero, waterone, watertwo, waterthree, waterfour, waterfive]
     frencharray = np.zeros((length, 18, 3))
     valuecounter = 0
@@ -91,14 +104,18 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
             valuecounter = valuecounter + 1
     frencharray = np.array(frencharray)
     coords = frencharray
-    print('complete')
-    np.savez(path + dataname, coords=coords, weights=weights, metadata=metadata)
+    coords=singleatomtrader(coords)
+    if deuterium==18:
+        np.savez('SortedData/' + dataname, coords=coords, weights=weights, metadata=metadata)
+    else:
+        np.savez('SortedData/' + dataname+f'_{deuterium}', coords=coords, weights=weights, metadata=metadata,simulation=simulation)
+
 
 for simulation in np.arange(1, 7):
     path=f'h2o5_d2o_prismPythonData/Uncategorized/minimum{simulation}_wfns/PythonData/'
     # path = f'h2o_d2o5_prism/minimum{simulation}_wfns/PythonData/'
     # path = f'h2o6_prism/PythonData/'
-    dataname = f'h2o5_d2o_prism_{simulation}'
+    dataname = f'h2o5_d2o_prism'
     mostlyD = False
     allH=False
     bigOne(path,dataname,mostlyD,allH,simulation)
@@ -106,7 +123,7 @@ for simulation in np.arange(1, 6):
     #path=f'h2o5_d2o_prismPythonData/Uncategorized/minimum{simulation}_wfns/PythonData/'
     path = f'h2o_d2o5_prism/minimum{simulation}_wfns/PythonData/'
     # path = f'h2o6_prism/PythonData/'
-    dataname = f'h2o_d2o5_prism_{simulation}'
+    dataname = f'h2o_d2o5_prism'
     mostlyD = True
     allH=False
     bigOne(path,dataname,mostlyD,allH,simulation)

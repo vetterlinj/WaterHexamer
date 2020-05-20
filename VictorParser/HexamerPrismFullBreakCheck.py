@@ -3,8 +3,13 @@ import matplotlib.pyplot as plt
 from VictorParser.loadnpz import *
 
 
-def bigOne(path,dataname,mostlyD,allH,simulation):
-    coords, weights, metadata, size = concatenatenpz(path + 'FullDataset/')
+def bigOne(path,dataname,mostlyD,allH):
+    # coords, weights, metadata, size = concatenatenpz(path + 'FullDataset/')
+    data=np.load(path+dataname+'.npz')
+    coords=data['coords']
+    weights=data['weights']
+    # simulation=data['simulation']
+
     # data = np.load(path + dataname)
     # # make a large matrix
     # coords = data['coords']
@@ -23,30 +28,6 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
         sort = np.argsort(list)[1]
         nextwater = sort * 3
         return nextwater
-
-
-    def doublewatertime(walkercoords, currentwater):
-        water = np.arange(0, 6) * 3
-        listh1 = []
-        listh2 = []
-        for i in water:
-            listh1.append(np.sqrt(np.sum(np.square(walkercoords[currentwater + 1] - walkercoords[i]))))
-            listh2.append(np.sqrt(np.sum(np.square(walkercoords[currentwater + 2] - walkercoords[i]))))
-        sorth1 = np.argsort(listh1)[1]
-        sorth2 = np.argsort(listh2)[1]
-        return sorth1 * 3, sorth2 * 3
-
-
-    def watertrader(walkercoords, currentwater, watertotrade, hydrogenpointer):
-        walkercoords[[currentwater, watertotrade]] = walkercoords[[watertotrade, currentwater]]
-        walkercoords[[currentwater + 1, watertotrade + hydrogenpointer]] = walkercoords[
-            [watertotrade + hydrogenpointer, currentwater + 1]]
-        if hydrogenpointer == 1:
-            walkercoords[[currentwater + 2, watertotrade + 2]] = walkercoords[[watertotrade + 2, currentwater + 2]]
-        elif hydrogenpointer == 2:
-            walkercoords[[currentwater + 2, watertotrade + 1]] = walkercoords[[watertotrade + 1, currentwater + 2]]
-        return walkercoords
-
 
     def checkdistance(walkercoords, particleOne, particleTwo):
         return np.sqrt(np.sum(np.square(walkercoords[particleOne] - walkercoords[particleTwo]))) * 0.529177
@@ -114,16 +95,6 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
         waterfive = 9
         deuterium = 4
         length = coords.shape[0]
-    print('reorg')
-    waterlist = [waterzero, waterone, watertwo, waterthree, waterfour, waterfive]
-    frencharray = np.zeros((length, 18, 3))
-    valuecounter = 0
-    for b in waterlist:
-        for c in np.arange(0, 3):
-            frencharray[:, valuecounter, :] = coords[:, b + c, :]
-            valuecounter = valuecounter + 1
-    frencharray = np.array(frencharray)
-    coords = frencharray
     print('complete')
     #numpy indexing
     results = {
@@ -148,7 +119,7 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
         'gAndHCorrelation':0,
         'sillyCheck':0}
 
-    resultsFile = open('Results/' + f"{dataname}_results", 'w')
+    resultsFile = open('Results/' + f"{dataname}_results.txt", 'w')
     count = 0
     reference = []
     problemcount=0
@@ -167,14 +138,6 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
             'sixteenToZeroCount': 0,
             'seventeenToSixCount': 0,
             'confusedCount': 0}
-        for b in np.arange(0, 6):
-            b = b * 3
-            if b!=1:
-                if checkdistance(coords[a], b + 1, (b + 6) % 18) < checkdistance(coords[a], b + 2, (b + 6) % 18):
-                    coords[a][[b + 1, b + 2]] = coords[a][[b + 2, b + 1]]
-            else:
-                if checkdistance(coords[a], b + 1, (b + 3) % 18) > checkdistance(coords[a], b + 2, (b + 3) % 18):
-                    coords[a][[b + 1, b + 2]] = coords[a][[b + 2, b + 1]]
         if whichwaterpointer(coords[a], 1) != 3:
             results['oneToThreeCount'] += weight
             problemresults['oneToThreeCount'] += weight
@@ -294,31 +257,47 @@ def bigOne(path,dataname,mostlyD,allH,simulation):
     resultsFile.close()
 
 
-for simulation in np.arange(1, 7):
-    path=f'h2o5_d2o_prismPythonData/Uncategorized/minimum{simulation}_wfns/PythonData/'
-    # path = f'h2o_d2o5_prism/minimum{simulation}_wfns/PythonData/'
-    # path = f'h2o6_prism/PythonData/'
-    dataname = f'h2o5_d2o_prism_{simulation}'
-    mostlyD = False
-    allH=False
-    bigOne(path,dataname,mostlyD,allH,simulation)
-for simulation in np.arange(1, 6):
-    #path=f'h2o5_d2o_prismPythonData/Uncategorized/minimum{simulation}_wfns/PythonData/'
-    path = f'h2o_d2o5_prism/minimum{simulation}_wfns/PythonData/'
-    # path = f'h2o6_prism/PythonData/'
-    dataname = f'h2o_d2o5_prism_{simulation}'
-    mostlyD = True
-    allH=False
-    bigOne(path,dataname,mostlyD,allH,simulation)
+# for simulation in np.arange(1, 7):
+#     path=f'h2o5_d2o_prismPythonData/Uncategorized/minimum{simulation}_wfns/PythonData/'
+#     # path = f'h2o_d2o5_prism/minimum{simulation}_wfns/PythonData/'
+#     # path = f'h2o6_prism/PythonData/'
+#     dataname = f'h2o5_d2o_prism_{simulation}'
+#     mostlyD = False
+#     allH=False
+#     bigOne(path,dataname,mostlyD,allH,simulation)
+# for simulation in np.arange(1, 6):
+#     #path=f'h2o5_d2o_prismPythonData/Uncategorized/minimum{simulation}_wfns/PythonData/'
+#     path = f'h2o_d2o5_prism/minimum{simulation}_wfns/PythonData/'
+#     # path = f'h2o6_prism/PythonData/'
+#     dataname = f'h2o_d2o5_prism_{simulation}'
+#     mostlyD = True
+#     allH=False
+#     bigOne(path,dataname,mostlyD,allH,simulation)
 
-path = f'h2o6_prism/PythonData/'
+
+
+
+# for number in np.arange(0,6):
+#     path=f'SortedData/'
+#     dataname=f'h2o5_d2o_prism_{number}'
+#     mostlyD = False
+#     allH=False
+#     bigOne(path,dataname,mostlyD,allH)
+# for number in np.arange(0,5):
+#     path=f'SortedData/'
+#     dataname=f'h2o_d2o5_prism_{number}'
+#     mostlyD = True
+#     allH=False
+#     bigOne(path,dataname,mostlyD,allH)
+path = f'SortedData/'
 dataname = 'h2o6_prism'
 mostlyD = False
 allH=True
-simulation=0
-bigOne(path,dataname,mostlyD,allH,simulation)
-path = f'd2o6_prism/PythonData/'
+bigOne(path,dataname,mostlyD,allH)
+path = f'SortedData/'
 dataname = 'd2o6_prism'
 mostlyD = False
 allH=True
-bigOne(path,dataname,mostlyD,allH,simulation)
+bigOne(path,dataname,mostlyD,allH)
+
+#simulation
