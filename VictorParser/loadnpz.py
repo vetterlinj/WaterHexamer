@@ -7,7 +7,7 @@ def loadnpz(path):
     print(npzFilePaths)
     return npzFilePaths
 
-def concatenatenpz(path):
+def concatenatenpz(path, metadata):
     '''
     Takes a path to a folder of npz files and concatenates them, returning the concatenated matrix, the weights, and metadata
     :param path: (string) path to folder of npz files
@@ -29,15 +29,52 @@ def concatenatenpz(path):
         weights=np.concatenate((weights,reshape))
         # print(len(reshape))
         #print(reshape)
-
+        if metadata==True:
         #keep track of metadata matrix?
-        filemetadata=[data['NumWalkers'],data['InitialWalkers'],data['time']]
-        metadata.append(filemetadata)
-        tracing.append(data['Size'])
+            filemetadata=[data['NumWalkers'],data['InitialWalkers'],data['time']]
+            metadata.append(filemetadata)
+            tracing.append(data['Size'])
     weights = np.array(weights)
-    metadata=np.array(metadata)
-    tracing=np.array(tracing)
-    return wavefunctions, weights, metadata, tracing
+    if metadata==True:
+        metadata=np.array(metadata)
+        tracing=np.array(tracing)
+        return wavefunctions, weights, metadata, tracing
+    else:
+        return wavefunctions,weights
+
+def concatenateseparatenpz(path):
+    '''
+    Takes a path to a folder of npz files and concatenates them, returning the concatenated matrix, the weights, and metadata
+    :param path: (string) path to folder of npz files
+    :return:
+    '''
+
+    filepaths=loadnpz(path)
+    count=0
+    coordsdict={}
+    weightsdict={}
+
+    for file in filepaths:
+        wavefunctions = np.empty([0, 18, 3], float)
+        weights = []
+        metadata = []
+        tracing = []
+        count+=1
+        data = np.load(file)
+        # make a large matrix
+        wavefunctions=np.concatenate((wavefunctions,data['coords']))
+        #make a weights matrix
+
+        reshape=data['weights']
+        reshape=reshape.T
+        weights=np.concatenate((weights,reshape))
+        # print(len(reshape))
+        #print(reshape)
+
+        weights = np.array(weights)
+        coordsdict[f'{count}']=wavefunctions
+        weightsdict[f'{count}']=weights
+    return coordsdict,weightsdict
 
 def writeMeAnXYZFile(walkercoords, filename, deuteriumPosition):
     coordsfile=open(filename,"w")
