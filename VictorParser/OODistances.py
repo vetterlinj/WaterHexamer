@@ -58,7 +58,13 @@ def bigOne(path,dataname,cageorprism):
     # else:
     #     resultsFile.write('Deuterium Position is: ' + str(deuterium) + "\n")
     for name, value in actualResults.items():
-        resultsFile.write(name + "\n")
+        changedname=name.replace('0','D')
+        changedname=changedname.replace('1','C')
+        changedname = changedname.replace('2', 'E')
+        changedname = changedname.replace('3', 'B')
+        changedname = changedname.replace('4', 'F')
+        changedname = changedname.replace('4', 'A')
+        resultsFile.write(changedname + "\n")
         resultsFile.write(str(value) + "\n")
         resultsFile.write(str(actualErrors[f'{name} std'])+"\n")
     resultsFile.close()
@@ -111,6 +117,6 @@ def bigOne(path,dataname,cageorprism):
 #     allH=False
 #     bigOne(path,dataname)
 
-path="MarkOutput/wavefunctions/"
-bigOne(path,'MarkSimulation','cage')
+path="IlahieStuff/MandelsthdamPartialWavefunctions/onlylast/"
+bigOne(path,'PartialMandelsthdamonlylast5','cage')
 
