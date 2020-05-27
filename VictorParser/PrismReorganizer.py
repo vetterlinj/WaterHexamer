@@ -29,7 +29,6 @@ def checkdistance(walkercoords, particleOne, particleTwo):
 def bigOne2(path,dataname,mostlyD,allH,simulation):
     coordsdict, weightsdict= concatenateseparatenpz(path + 'FullDataset/')
     resultspath=path[:-11]
-    print(resultspath)
     dictionarycount=0
     filenumbers=[]
     for coordsnumber,coords in coordsdict.items():
@@ -99,7 +98,6 @@ def bigOne2(path,dataname,mostlyD,allH,simulation):
             waterfive = 9
             deuterium = 4
             length = coords.shape[0]
-        print('reorg')
     #    writeMeAnXYZFile(coords[1],path+dataname+'.xyz',deuterium)
 
 
