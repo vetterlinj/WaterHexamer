@@ -26,7 +26,7 @@ def markthing():
       bleh.write(template_to_write)
 
 def getEnergies():
-  name='BigCalculationEnergies6600'
+  name='BigRestartEnergies5000'
   data=np.load(f'/Users/nicholasvetterli/PycharmProjects/WaterHexamer/VictorParser/IlahieStuff/{name}.npy')
   resultsFile = open(f"/Users/nicholasvetterli/PycharmProjects/WaterHexamer/VictorParser/IlahieStuff/{name}.txt", 'w')
   for item in data:

@@ -17,25 +17,31 @@ read_float_block = lambda data, nblocks: np.frombuffer(data.read(8*nblocks), dty
 #files=['h2o6_prism','d2o6_prism','d2o6_cage','h2o6_cage']
 #'d2o6_prism','d2o6_cage','h2o6_prism','h2o6_cage',
 #files=['sample']
-files=['h2o6_book']
+# files=['h2o6_book']
 #numberofsets=1
 #numbersum=0
 # for file in files:
 #     count = 0
     # data = open(f"NickFiles/VictorData/{file}/{file}_coords.dat", "rb")
     # weightfile = open(f"NickFiles/VictorData/{file}/{file}_weight.dat", "r")
-hasWeights=False
+hasWeights=True
 for simulation in np.arange(1, 2):
     count=0
     # dataname='d2o6_prism_coords.dat'
     # path = f'd2o6_prism/'
-    dataname='200k_walkers_wfn.dat'
-    path = f'Mark/'
+    minnumber=6
+    countingbonus=0
+    startornot=''
+    #startornot='_start'
+    # dataname=f'h2o5_d2o_prism'+startornot+f'_coords_min{minnumber}.dat'
+    # path = f'UpdatedPrism/Raw/h2o5_d2o/D{minnumber}/'
+
+
     # path = f'h2o_d2o5_prism/minimum{simulation}_wfns/'
     # dataname = f'h2o_d2o5_prism_coords_min{simulation}.dat'
-    data = open(path+dataname, "rb")
+    data = open('UpdatedPrism/Raw/d2o6/d2o6_prism_coords.dat', "rb")
     if hasWeights==True:
-        weightfile = open(path+f"d2o6_prism_weight.dat", "r")
+        weightfile = open('UpdatedPrism/Raw/d2o6/d2o6_prism_weight.dat', "r")
     #data = open(f"{file}_coords.dat", "rb")
     #weightfile = open(f"{file}_weight.dat", "r")
     skip_ws(data)
@@ -70,7 +76,7 @@ for simulation in np.arange(1, 2):
             read_int(data)
             wfns.append(read_float_block(data, 54))
             #ONLY USE BELOW LINE FOR BOTTOM HOMO CAGE AND PRISM, extra zero padding
-            #read_float(data)
+            # read_float(data)
         wfns=np.array(wfns)
         newwfns=np.reshape(wfns,(number,18,3))
         # wfnsx=wfns[:,0::3]
@@ -92,14 +98,14 @@ for simulation in np.arange(1, 2):
                 weights[x] = weights[x].strip()
                 weights[x] = np.double(weights[x])
 
-        paddednumber=str(count).zfill(3)
+        paddednumber=str(count+countingbonus).zfill(3)
 #        numbersum=numbersum+number
         #np.savez(f'PythonData/{file}{paddednumber}',coords=newwfns,weights=weights,time=time,NumWalkers=number,InitialWalkers=initialwalkers)
         if hasWeights==False:
-            np.savez(path+f'PythonData/200k_walkers_wfn{paddednumber}',coords=newwfns,time=time,NumWalkers=number,InitialWalkers=initialwalkers,Size=number)
+            np.savez(f'UpdatedPrism/Parsed/h2o5_d2o/D2/D2{paddednumber}',coords=newwfns,time=time,NumWalkers=number,InitialWalkers=initialwalkers,Size=number)
             print(count)
         if hasWeights==True:
-            np.savez(path + f'PythonData/FullDataset/Dataname{paddednumber}', coords=newwfns, weights=weights,
+            np.savez(f'UpdatedPrism/Parsed/d2o6/d2o6{paddednumber}', coords=newwfns, weights=weights,
                      time=time, NumWalkers=number, InitialWalkers=initialwalkers, Size=number)
             print(count)
         #weightsname='SampleCoords/'+str(count)+'NumWalkersWeights'+str(number)

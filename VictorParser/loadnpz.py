@@ -42,6 +42,87 @@ def concatenatenpz(path, metadata):
     else:
         return wavefunctions,weights
 
+def concatenateseparatesimulationnpz(path):
+    '''
+    Takes a path to a folder of npz files and concatenates them, returning the concatenated matrix, the weights, and metadata
+    :param path: (string) path to folder of npz files
+    :return:
+    '''
+
+    filepaths=loadnpz(path)
+    count=0
+    coordsdict={}
+    weightsdict={}
+    numberoffiles=len(filepaths)
+    print(len(filepaths))
+
+    #for file in filepaths:
+    if path =='UpdatedPrism/Parsed/h2o5_d2o/D2/':
+        wavefunctions = np.empty([0, 18, 3], float)
+        metadata = []
+        tracing = []
+        count += 1
+        weights = []
+        for a in np.arange(0, 10):
+            data = np.load(filepaths[int(a)])
+            # make a large matrix
+            wavefunctions = np.concatenate((wavefunctions, data['coords']))
+            # make a weights matrix
+
+            reshape = data['weights']
+            reshape = reshape.T
+            weights = np.concatenate((weights, reshape))
+        weights = np.array(weights)
+        coordsdict[f'1'] = wavefunctions
+        weightsdict[f'1'] = weights
+        # print(len(reshape))
+        # print(reshape)
+        for orange in np.arange(0, ((numberoffiles-10) / 17)):
+            wavefunctions = np.empty([0, 18, 3], float)
+            print(((numberoffiles-10) / 17)+2)
+            weights = []
+            metadata = []
+            tracing = []
+            count += 1
+            for a in np.arange(0, 17):
+                data = np.load(filepaths[int(a+10 + orange * 17)])
+                # make a large matrix
+                wavefunctions = np.concatenate((wavefunctions, data['coords']))
+                # make a weights matrix
+
+                reshape = data['weights']
+                reshape = reshape.T
+                weights = np.concatenate((weights, reshape))
+            # print(len(reshape))
+            # print(reshape)
+
+            weights = np.array(weights)
+            coordsdict[f'{count}'] = wavefunctions
+            weightsdict[f'{count}'] = weights
+    else:
+        for orange in np.arange(0,numberoffiles/17):
+            wavefunctions = np.empty([0, 18, 3], float)
+            metadata = []
+            tracing = []
+            weights = []
+            count+=1
+            for a in np.arange(0,17):
+                data = np.load(filepaths[int(a+orange*17)])
+            # make a large matrix
+                wavefunctions=np.concatenate((wavefunctions,data['coords']))
+            #make a weights matrix
+
+                reshape=data['weights']
+                reshape=reshape.T
+                weights=np.concatenate((weights,reshape))
+            # print(len(reshape))
+            #print(reshape)
+
+            weights = np.array(weights)
+            coordsdict[f'{count}']=wavefunctions
+            weightsdict[f'{count}']=weights
+            print(count*17)
+    return coordsdict,weightsdict
 def concatenateseparatenpz(path):
     '''
     Takes a path to a folder of npz files and concatenates them, returning the concatenated matrix, the weights, and metadata
@@ -53,7 +134,8 @@ def concatenateseparatenpz(path):
     count=0
     coordsdict={}
     weightsdict={}
-
+    numberoffiles=len(filepaths)
+    print(len(filepaths))
     for file in filepaths:
         wavefunctions = np.empty([0, 18, 3], float)
         weights = []
