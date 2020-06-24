@@ -2,8 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 sys.path.insert(0, 'FixingThingsWithRyan')
-# from FixingThingsWithRyan \
-import h2o_pot
+from FixingThingsWithRyan.h2o_pot import calc_hoh_pot
 exit()
 
 
