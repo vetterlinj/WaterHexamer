@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from VictorParser.Constants import *
 # import sys
 # sys.path.insert(0, 'FixingThingsWithRyan')
 print('This one is new')
