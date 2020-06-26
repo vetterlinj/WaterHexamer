@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 # import sys
 # sys.path.insert(0, 'FixingThingsWithRyan')
 print('This is the old file')
-from VictorParser.FixingThingsWithRyan import h2o_pot
-
-h2o_pot.calc_hoh_pot([[[0,0,0],[2,0,0],[0,0,1]]],1)
-exit()
+# from VictorParser.FixingThingsWithRyan import h2o_pot
+# #
+# # h2o_pot.calc_hoh_pot([[[0,0,0],[2,0,0],[0,0,1]]],1)
+# # exit()
 
 
 amutoelectron=1.000000000000000000/6.02213670000e23/9.10938970000e-28
