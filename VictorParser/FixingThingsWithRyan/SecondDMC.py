@@ -1,13 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from VictorParser.Constants import *
+import sys
+import h2o_pot
+import os
+# from VictorParser.Constants import *
 # import sys
 # sys.path.insert(0, 'FixingThingsWithRyan')
-print('This one is new')
-import sys
-import os
+numWalkers=1000
+numTimeSteps=1000
+deltaTau=1
+bunchofjobs=True
+print('running')
+filename='DMCResult'
+if bunchofjobs == True:
+    fnameExtension=sys.argv[1]
+    arg2=sys.argv[2]
+    numWalkers=int(arg2)
+    arg3 = sys.argv[3]
+    numTimeSteps=int(arg3)
+    arg4= sys.argv[4]
+    deltaTau=int(arg4)
+    filename="Result/"+fnameExtension
+
 # sys.path.insert(0, "/Users/nicholasvetterli/PycharmProjects/WaterHexamer/VictorParser/FixingThingsWithRyan")
-import h2o_pot
+
 # amutoelectron=1.000000000000000000/6.02213670000e23/9.10938970000e-28
 # massH=1.008*amutoelectron
 # massO=16*amutoelectron
@@ -16,9 +32,6 @@ import h2o_pot
 # omega=3000*(4.5563e-6)
 # k=m*(omega**2)
 dimensions=3
-numWalkers=1000
-numTimeSteps=1000
-deltaTau=1
 # sigma=np.sqrt(deltaTau/m)
 alpha=1/(2*deltaTau)
 # V=h2o_pot.calc_hoh_pot
@@ -118,15 +131,21 @@ for i in np.arange(0,numTimeSteps):
     count+=1
     coords=randommovement(coords,dimensions,deltaTau)
     energies=getDemEnergies(coords)
-    fullEnergies.append([i,np.average(energies),np.std(energies)])
+    fullEnergies.append([i,np.average(energies)/(4.5563e-6)])
     coords=birthandDeath(coords, energies,alpha,numWalkers)
     # print(count)
     # print(len(coords))
 fullEnergies=np.array(fullEnergies)
+
 # plt.errorbar(fullEnergies[:,0],fullEnergies[:,1],yerr=fullEnergies[:,2])
-plt.plot(fullEnergies[:,0],fullEnergies[:,1]/(4.5563e-6))
-plt.show()
-print('done')
+plt.plot(fullEnergies[:,0],fullEnergies[:,1])
+plt.savefig(filename)
+np.save(filename+"Data",fullEnergies)
+averageEnergy=np.average(fullEnergies[int(len(fullEnergies)/2):-1,1])
+resultsFile = open(f"{filename}Energy.txt", 'w')
+resultsFile.write(str(averageEnergy) + '\n')
+resultsFile.close()
+exit()
 
 
 
