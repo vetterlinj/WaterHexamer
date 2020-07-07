@@ -7,7 +7,7 @@ print('This is the old file')
 # #
 # # h2o_pot.calc_hoh_pot([[[0,0,0],[2,0,0],[0,0,1]]],1)
 # # exit()
-
+#Harmonic to Morse to 2*1D to 6D
 
 amutoelectron=1.000000000000000000/6.02213670000e23/9.10938970000e-28
 massH=1.008*amutoelectron
@@ -17,7 +17,7 @@ m=(massH*massO)/(massH+massO)
 omega=3000*(4.5563e-6)
 k=m*(omega**2)
 dimensions=1
-numWalkers=1000
+numWalkers=3000
 numTimeSteps=1000
 deltaTau=1
 sigma=np.sqrt(deltaTau/m)
@@ -79,13 +79,16 @@ for i in np.arange(0,numTimeSteps):
     count+=1
     coords=randommovement(coords,sigma)
     energies=getDemEnergies(coords)
-    fullEnergies.append([i,np.average(energies),np.std(energies)])
+    Vref=np.average(energies)-(alpha/numWalkers*(len(coords[:,0])-numWalkers))
+    fullEnergies.append([i,Vref,np.std(energies)])
     coords=birthandDeath(coords, energies,alpha,numWalkers)
     # print(count)
     # print(len(coords))
 fullEnergies=np.array(fullEnergies)
 # plt.errorbar(fullEnergies[:,0],fullEnergies[:,1],yerr=fullEnergies[:,2])
 plt.plot(fullEnergies[:,0],fullEnergies[:,1]/(4.5563e-6))
+averageEnergy=np.average(fullEnergies[int(len(fullEnergies)/2):,1])
+print(averageEnergy)
 plt.show()
 
 

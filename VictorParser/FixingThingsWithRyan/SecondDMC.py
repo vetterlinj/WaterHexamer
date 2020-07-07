@@ -6,10 +6,10 @@ import os
 # from VictorParser.Constants import *
 # import sys
 # sys.path.insert(0, 'FixingThingsWithRyan')
-numWalkers=1000
-numTimeSteps=1000
+numWalkers=3000
+numTimeSteps=10000
 deltaTau=1
-bunchofjobs=True
+bunchofjobs=False
 print('running')
 filename='DMCResult'
 if bunchofjobs == True:
@@ -51,24 +51,13 @@ def randommovement(coords,dimensions,deltaTau):
         sigma = np.sqrt(deltaTau / m)
         randomCoord = np.zeros((dimensions))
         for coord in np.arange(0, dimensions):
+            #COMMENT PLEASE
             randomCoord[coord] += np.random.normal(0, sigma)
+        print(randomCoord)
         coords[walker]+=randomCoord
     return coords
 
 def getDemEnergies(coords):
-    # energies=[]
-    #
-    # for a in np.arange(0,len(coords[:,0])/3):
-    #
-    #     a=int(a*3)
-    #     walkercoords=[]
-    #     walkercoords.append(coords[a])
-    #     walkercoords.append(coords[a+1])
-    #     walkercoords.append(coords[a+2])
-    #     # walkercoords.append([0,0,0])
-    #     # walkercoords.append([1,0,0])
-    #     # walkercoords.append([0,0,2])
-    #     energies.append(h2o_pot.calc_hoh_pot([walkercoords],1))
     reshapedcoords=np.reshape(coords,(len(coords)//3,3,3))
     energies=h2o_pot.calc_hoh_pot(reshapedcoords,len(coords)//3)
     return energies
@@ -78,9 +67,6 @@ def birthandDeath(coords,energies,alpha,numWalkers):
     # print('averageEnergy:')
     # print(averageEnergy)
     Vref=averageEnergy-(alpha/numWalkers*(len(coords[:,0])/3-numWalkers))
-
-    # print(len(coords[:,0]))
-    # print()
     birthlist=[]
     deathlist=[]
     for walker in np.arange(0,int(len(coords[:,0])/3)):
@@ -125,14 +111,20 @@ for i in np.arange(0,numWalkers):
     coords[i*3+1]+= startingGeo[1]
     coords[i*3+2]+=startingGeo[2]
 # print(len(coords[:,0]))
+print('initalized')
 count=0
 fullEnergies=[]
 for i in np.arange(0,numTimeSteps):
+    if i%100==0:
+        print(i)
     count+=1
     coords=randommovement(coords,dimensions,deltaTau)
     energies=getDemEnergies(coords)
     fullEnergies.append([i,np.average(energies)/(4.5563e-6)])
+    if i==0:
+        #do VREF right
     coords=birthandDeath(coords, energies,alpha,numWalkers)
+    #real vref for time
     # print(count)
     # print(len(coords))
 fullEnergies=np.array(fullEnergies)
@@ -143,10 +135,10 @@ plt.savefig(filename)
 np.save(filename+"Data",fullEnergies)
 averageEnergy=np.average(fullEnergies[int(len(fullEnergies)/2):-1,1])
 resultsFile = open(f"{filename}Energy.txt", 'w')
+# 4638.39 cm^-1 for Pschwenk
 resultsFile.write(str(averageEnergy) + '\n')
 resultsFile.close()
 exit()
-
 
 
 
