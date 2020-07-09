@@ -53,7 +53,7 @@ def randommovement(coords,dimensions,deltaTau):
         for coord in np.arange(0, dimensions):
             #COMMENT PLEASE
             randomCoord[coord] += np.random.normal(0, sigma)
-        print(randomCoord)
+        # print(randomCoord)
         coords[walker]+=randomCoord
     return coords
 
@@ -121,7 +121,7 @@ for i in np.arange(0,numTimeSteps):
     coords=randommovement(coords,dimensions,deltaTau)
     energies=getDemEnergies(coords)
     fullEnergies.append([i,np.average(energies)/(4.5563e-6)])
-    if i==0:
+    # if i==0:
         #do VREF right
     coords=birthandDeath(coords, energies,alpha,numWalkers)
     #real vref for time

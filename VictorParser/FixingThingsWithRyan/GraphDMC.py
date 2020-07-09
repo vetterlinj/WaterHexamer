@@ -25,7 +25,7 @@ def plotthispls(location,label,numberofeach):
         averageEnergy = np.average(fullEnergies[int(len(fullEnergies) / 2):-1, 1])
         # averageEnergy = np.average(fullEnergies[9950:-1, 1])
         groupedY.append(averageEnergy)
-        if count ==4:
+        if count ==(numberofeach-1):
             Yval.append(np.average(groupedY))
             Ystd.append(np.std(groupedY))
     sort=np.argsort(Xval)
@@ -33,6 +33,8 @@ def plotthispls(location,label,numberofeach):
     Yval=np.array(Yval)[sort]
     Ystd=np.array(Ystd)[sort]
     plt.errorbar(Xval,Yval,Ystd,label=label)
+    plt.title(f"{numberofeach} Replicates")
+    plt.ylim(4625,4645)
     plt.plot(np.arange(11), np.repeat(4638, 11), 'k',label="Minimum of Potential Surface")
 def plotOverTime(location,label):
     path=f"10kSmall/"
@@ -59,6 +61,7 @@ def plotOverTime(location,label):
         count += 1
     print(len(Xval))
     print(len(Yval))
+
     plt.plot(Xval, Yval, label=label)
     plt.ylim(4000,5000)
 #plotthispls('10',"10000 Timesteps, deltaTau=5")
@@ -67,8 +70,9 @@ def plotOverTime(location,label):
 #plotOverTime('10',"10K walkers over time")
 #plotthispls('T',"10K timesteps, 8k Walkers")
 #plotthispls('0',"10K timesteps, 8k Walkers")
-#plotthispls("8Kwalkers","10K timesteps, 8k Walkers")
+#plotthispls("8Kwalkers","10K timesteps, 8k Walkers", 5)
 plotthispls("8kWalkers10Sims","10K timesteps, 8k Walkers",10)
+#plotthispls("50kau","50,000 AU total time, 8k Walkers",5)
 
 plt.ylabel("Energy (Wavenumbers)")
 #plt.xlabel("Walkers")
