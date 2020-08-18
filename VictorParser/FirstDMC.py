@@ -26,7 +26,7 @@ alpha=1/(2*deltaTau)
 #first is array, second is length of the array
 #mass for each coord
 def randommovement(coords,sigma):
-    for walker in np.arange(0,len(coords[:,0])):
+    for walker in np.arange(0,len(coords)):
         coords[walker]+=np.random.normal(0,sigma)
     return coords
 
@@ -34,44 +34,58 @@ def getDemEnergies(coords):
     energies=0.5*k*(np.square(coords))
     return energies
 
-def birthandDeath(coords,energies,alpha,numWalkers):
-    averageEnergy=np.average(energies)
+
+def birthandDeath(coords, energies, alpha, numWalkers, weights, deltaTau):
+    averageEnergy = np.average(energies,weights)
     # print('averageEnergy:')
     # print(averageEnergy)
-    Vref=averageEnergy-(alpha/numWalkers*(len(coords[:,0])-numWalkers))
-
+    #Vref = averageEnergy - (alpha / numWalkers * (len(coords) - numWalkers))
+    Vref = averageEnergy - (alpha *np.log(np.sum(weights)/numWalkers))
     # print(len(coords[:,0]))
     # print()
-    birthlist=[]
-    deathlist=[]
-    for walker in np.arange(0,len(coords[:,0])):
-        random=np.random.random()
-        if energies[walker]<Vref:
-            prob=np.exp(-deltaTau*(energies[walker]-Vref))-1
-            if random<prob:
-                birthlist.append(coords[walker])
-        elif energies[walker]>Vref:
-            prob=1-np.exp(-deltaTau*(energies[walker]-Vref))
-            # print('probability')
-            # print(prob)
-            # print(np.exp(-deltaTau*(energies[walker]-Vref)))
-            # exit()
-            if random<prob:
-                deathlist.append(walker)
-        else:
-            print('I am confuse destroyer of work')
-    birthlist=np.array(birthlist)
-    deathlist=np.array(deathlist)
-    deletedcoords=np.delete(coords,deathlist,0)
-    deletedcoords=np.array(deletedcoords)
-    if len(birthlist)==0:
+    birthlist = []
+    deathlist = []
+    deathweights = []
+    deathcount = 0
+    for walker in np.arange(0, int(len(coords))):
+        expon = np.exp(-deltaTau * (energies[walker] - Vref))
+        weights[walker] *= expon
+        if weights[walker] < (0.01):
+            actualwalker = walker * 1
+            deathlist.append(actualwalker)
+            deathweights.append(walker)
+            deathcount += 1
+    deathlist = np.array(deathlist)
+    deathweights = np.array(deathweights)
+    deletedcoords = np.delete(coords, deathlist, 0)
+    deletedcoords = np.array(deletedcoords)
+    deletedweights = np.delete(weights, deathweights, 0)
+    if len(weights) - len(deathweights) != len(deletedweights):
+        print('issue')
+    appendlist = []
+    if deathcount > 0:
+        for neededwalker in np.arange(0, deathcount):
+            walker = np.argmax(deletedweights)
+            actualwalker = walker * 1
+            birthlist.append(deletedcoords[actualwalker])
+            deletedweights[walker] /= 2
+            # deletedweights.append(deletedweights[walker])
+            appendlist.append(deletedweights[walker])
+    deletedweights = np.array(deletedweights)
+    birthlist = np.array(birthlist)
+    appendlist = np.array(appendlist)
+    if len(birthlist) == 0:
         print('empty')
-        birthedcoords=deletedcoords
+        birthedcoords = deletedcoords
+        birthedweights = deletedweights
     else:
-        birthedcoords=np.append(deletedcoords,birthlist,axis=0)
-    return birthedcoords
+        birthedcoords = np.append(deletedcoords, birthlist)
+        birthedweights = np.append(deletedweights, appendlist)
+    return birthedcoords, birthedweights
 
 coords=np.zeros((numWalkers,dimensions))
+weights=np.zeros((numWalkers))
+weights+=1
 # print(len(coords[:,0]))
 count=0
 fullEnergies=[]
@@ -79,9 +93,11 @@ for i in np.arange(0,numTimeSteps):
     count+=1
     coords=randommovement(coords,sigma)
     energies=getDemEnergies(coords)
-    Vref=np.average(energies)-(alpha/numWalkers*(len(coords[:,0])-numWalkers))
+    averageEnergy=np.average(energies)
+    # Vref = averageEnergy - (alpha / numWalkers * (len(coords) - numWalkers))
+    Vref = averageEnergy - (alpha * np.log(np.sum(weights) / numWalkers))
     fullEnergies.append([i,Vref,np.std(energies)])
-    coords=birthandDeath(coords, energies,alpha,numWalkers)
+    coords,weights=birthandDeath(coords, energies,alpha,numWalkers,weights,deltaTau)
     # print(count)
     # print(len(coords))
 fullEnergies=np.array(fullEnergies)

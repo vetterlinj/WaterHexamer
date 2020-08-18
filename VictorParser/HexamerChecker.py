@@ -1,11 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from VictorParser.loadnpz import *
-data=np.load('NickFiles/VictorData/h2o6_book/SortedWithoutProblems.npz')
+#data=np.load('NickFiles/VictorData/h2o6_book/SortedWithoutProblems.npz')
+data=np.load('FixingThingsWithRyan/NewHexDisc/npzFiles/1k_10_0Data.npz')
+#1k_10_0Data.npz
 coords=data['coords']
 weights=data['weights']
-problems=data['problems']
-print(problems)
+exit()
+# problems=data['problems']
+# print(problems)
 oxygen=[coords[:,0,:],coords[:,3,:],coords[:,6,:],coords[:,9,:],coords[:,12,:],coords[:,15,:]]
 #Oxygen is (6,walkers,3)
 h1=[coords[:,1,:],coords[:,4,:],coords[:,7,:],coords[:,10,:],coords[:,13,:],coords[:,16,:]]

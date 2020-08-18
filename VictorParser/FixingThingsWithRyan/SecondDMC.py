@@ -7,7 +7,7 @@ import os
 # import sys
 # sys.path.insert(0, 'FixingThingsWithRyan')
 numWalkers=3000
-numTimeSteps=10000
+numTimeSteps=1000
 deltaTau=1
 bunchofjobs=False
 print('running')
@@ -101,6 +101,9 @@ def birthandDeath(coords,energies,alpha,numWalkers):
     else:
         birthedcoords=np.append(deletedcoords,birthlist,axis=0)
     return birthedcoords
+def getVref(energies, alpha, weights, numWalkers, coords):
+    Vref = np.average(energies) - (alpha / numWalkers * ((len(coords)/3) - numWalkers))
+    return Vref
 angstr=0.529177
 startingGeo=np.array([[0.9578400,0.0000000,0.0000000],
                      [-0.2399535,0.9272970,0.0000000],
@@ -114,21 +117,25 @@ for i in np.arange(0,numWalkers):
 print('initalized')
 count=0
 fullEnergies=[]
+weights=[]
 for i in np.arange(0,numTimeSteps):
     if i%100==0:
         print(i)
     count+=1
     coords=randommovement(coords,dimensions,deltaTau)
     energies=getDemEnergies(coords)
-    fullEnergies.append([i,np.average(energies)/(4.5563e-6)])
+    Vref = getVref(energies, alpha, weights, numWalkers, coords)
+    fullEnergies.append([i, Vref / (4.5563e-6)])
     # if i==0:
         #do VREF right
     coords=birthandDeath(coords, energies,alpha,numWalkers)
     #real vref for time
     # print(count)
     # print(len(coords))
+energies = getDemEnergies(coords)
+Vref=getVref(energies,alpha,weights,numWalkers,coords)
+fullEnergies.append([numTimeSteps, Vref / (4.5563e-6)])
 fullEnergies=np.array(fullEnergies)
-
 # plt.errorbar(fullEnergies[:,0],fullEnergies[:,1],yerr=fullEnergies[:,2])
 plt.plot(fullEnergies[:,0],fullEnergies[:,1])
 plt.savefig(filename)
