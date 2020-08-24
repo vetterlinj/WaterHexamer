@@ -19,11 +19,11 @@ for weirdsimthingy in np.arange(0,1):
     watersperwalker=6
     numWalkers = 2000
     numTimeSteps = 1000
-    deltaTau = 1
+    deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=True
-    ContWeights=True
+    bunchofjobs=False
+    ContWeights=False
     debut=False
     print('running')
     filename='DMCResult'
@@ -94,16 +94,27 @@ for weirdsimthingy in np.arange(0,1):
             return energies
         if ContWeights==False:
             def getVref(energies,alpha,weights,numWalkers,coords,watersperwalker):
-                if debut==True:
-                    print(len(coords) / 3/watersperwalker)
+                #if debut==True:
+                    #print(len(coords) / 3/watersperwalker)
                 Vref = np.average(energies) - (alpha / numWalkers * (len(coords)/(3*watersperwalker) - numWalkers))
+                #print(np.average(energies))
+                #print(alpha / numWalkers * (len(coords)/(3*watersperwalker) - numWalkers))
+                #print(alpha)
+                #print(numWalkers)
+                #print((len(coords)/(3*watersperwalker) - numWalkers))
+                if len(coords)/(3*watersperwalker)!= len(energies):
+                    print("BIG PROBLEM")
+                #check len coords (modified) is the same as energies
                 return Vref
-            def birthandDeath(coords,energies,alpha,numWalkers,weights,deltaTau,watersperwalker):
+            def birthandDeath(coords,energies,alpha,numWalkers,weights,deltaTau,watersperwalker,Vref):
                 #check
                 averageEnergy=np.average(energies)
                 # print('averageEnergy:')
                 # print(averageEnergy)
-                Vref = np.average(energies) - (alpha / numWalkers * (len(coords)/(3*watersperwalker) - numWalkers))
+                #VREF FROM PREVIOUS STEP
+                #too many VREF (before or after only)
+                #displace, calc Vref, not recalc after branching, want to calc once per time step
+                #Vref = np.average(energies) - (alpha / numWalkers * (len(coords)/(3*watersperwalker) - numWalkers))
 
                 # print(len(coords[:,0]))
                 # print()
@@ -111,44 +122,51 @@ for weirdsimthingy in np.arange(0,1):
                 deathlist=[]
                 for walker in np.arange(0,int(len(coords)/(3*watersperwalker))):
                     random=np.random.random()
-                    if energies[walker]<Vref:
-                        prob=np.exp(-deltaTau*(energies[walker]-Vref))-1
-                        if random<prob:
-                            actualwalker=walker*(3*watersperwalker)
-                            for ff in np.arange(0,(3*watersperwalker),1):
-                                birthlist.append(coords[actualwalker+ff])
-                    elif energies[walker]>Vref:
-                        prob=1-np.exp(-deltaTau*(energies[walker]-Vref))
-                        # print('probability')
-                        # print(prob)
-                        # print(np.exp(-deltaTau*(energies[walker]-Vref)))
-                        # exit()
-                        if random<prob:
-                            actualwalker=walker*(3*watersperwalker)
-                            for ff in np.arange(0, (3*watersperwalker), 1):
-                                deathlist.append(actualwalker+ff)
-                    else:
-                        print('I am confuse destroyer of work')
+                    # if energies[walker]<Vref:
+                    actualwalker = walker * (3 * watersperwalker)
+                    expon=np.exp(-deltaTau*(energies[walker]-Vref))
+                    if np.int(expon)>0:
+                        for neededwalker in np.arange(0,np.int(expon)):
+                            for ff in np.arange(0, (3 * watersperwalker), 1):
+                                birthlist.append(coords[actualwalker + ff])
+
+                    prob=abs(expon-int(expon))
+                    if random<prob:
+                        for ff in np.arange(0,(3*watersperwalker),1):
+                            birthlist.append(coords[actualwalker+ff])
+                        #birth more walkers eg 5 for 5.8 with then prob as if .8
+                    # elif energies[walker]>Vref:
+                    #     prob=1-np.exp(-deltaTau*(energies[walker]-Vref))
+                    #     # print('probability')
+                    #     # print(prob)
+                    #     # print(np.exp(-deltaTau*(energies[walker]-Vref)))
+                    #     # exit()
+                    #     if random<prob:
+                    #         actualwalker=walker*(3*watersperwalker)
+                    #         for ff in np.arange(0, (3*watersperwalker), 1):
+                    #             deathlist.append(actualwalker+ff)
+                    # else:
+                    #     print('I am confuse destroyer of work')
                 birthlist=np.array(birthlist)
-                deathlist=np.array(deathlist)
-                if debut==True:
-                    print("Number Killed: "+str(len(deathlist)/(3*watersperwalker)))
-                deletedcoords=np.delete(coords,deathlist,0)
-                deletedcoords=np.array(deletedcoords)
-                if len(birthlist)==0:
-                    #print('empty')
-                    birthedcoords=deletedcoords
-                else:
-                    if debut == True:
-                        print(len(birthlist)/(3*watersperwalker))
-                    birthedcoords=np.append(deletedcoords,birthlist,axis=0)
-                return birthedcoords, weights
+                # deathlist=np.array(deathlist)
+                # if debut==True:
+                #     print("Number Killed: "+str(len(deathlist)/(3*watersperwalker)))
+                # # deletedcoords=np.delete(coords,deathlist,0)
+                # # deletedcoords=np.array(deletedcoords)
+                # # if len(birthlist)==0:
+                #     #print('empty')
+                #     birthedcoords=deletedcoords
+                # else:
+                #     if debut == True:
+                #         print(len(birthlist)/(3*watersperwalker))
+                #     birthedcoords=np.append(deletedcoords,birthlist,axis=0)
+                return birthlist, weights
         elif ContWeights==True:
             def getVref(energies,alpha,weights,numWalkers,coords,watersperwalker):
                 energies=getDemEnergies(coords,watersperwalker)
                 Vref = np.average(energies, weights=weights) - (alpha * np.log(np.sum(weights) / numWalkers))
                 return Vref
-            def birthandDeath(coords, energies, alpha, numWalkers,weights,deltaTau,watersperwalker):
+            def birthandDeath(coords, energies, alpha, numWalkers,weights,deltaTau,watersperwalker,Vref):
                 averageEnergy = np.average(energies, weights=weights)
                 # print('averageEnergy:')
                 # print(averageEnergy)
@@ -218,21 +236,25 @@ for weirdsimthingy in np.arange(0,1):
             if count %100 ==0:
                 print(count)
                 print(Vref / (4.5563e-6) / (watersperwalker))
+            if i==0:
+                energies=getDemEnergies(coords,watersperwalker)
+                Vref = getVref(energies, alpha, weights, numWalkers, coords, watersperwalker)
             coords=randommovement(coords,dimensions,deltaTau)
             energies=getDemEnergies(coords,watersperwalker)
-            Vref=getVref(energies,alpha,weights,numWalkers,coords,watersperwalker)
+            # Vref=getVref(energies,alpha,weights,numWalkers,coords,watersperwalker)
             # print(Vref / (4.5563e-6) / 6)
+            # fullEnergies.append([i,Vref/(watersperwalker*4.5563e-6)])
+            coords,weights=birthandDeath(coords, energies,alpha,numWalkers,weights,deltaTau,watersperwalker,Vref)
+            energies = getDemEnergies(coords,watersperwalker)
+            Vref = getVref(energies, alpha, weights, numWalkers, coords,watersperwalker)
+            #print(Vref / (watersperwalker*4.5563e-6))
             fullEnergies.append([i,Vref/(watersperwalker*4.5563e-6)])
-            coords,weights=birthandDeath(coords, energies,alpha,numWalkers,weights,deltaTau,watersperwalker)
-            # energies = getDemEnergies(coords,watersperwalker)
-            # Vref = getVref(energies, alpha, weights, numWalkers, coords,watersperwalker)
-            # fullEnergies.append([i, Vref / (4.5563e-6)])
 
             # print(len(coords))
-        coords = randommovement(coords, dimensions, deltaTau)
-        energies = getDemEnergies(coords,watersperwalker)
-        Vref=getVref(energies,alpha,weights,numWalkers,coords,watersperwalker)
-        fullEnergies.append([numTimeSteps, Vref / (watersperwalker*4.5563e-6)])
+        # coords = randommovement(coords, dimensions, deltaTau)
+        # energies = getDemEnergies(coords,watersperwalker)
+        # Vref=getVref(energies,alpha,weights,numWalkers,coords,watersperwalker)
+        # fullEnergies.append([numTimeSteps, Vref / (watersperwalker*4.5563e-6)])
         fullEnergies=np.array(fullEnergies)
         # plt.errorbar(fullEnergies[:,0],fullEnergies[:,1],yerr=fullEnergies[:,2])
         plt.plot(fullEnergies[:,0],fullEnergies[:,1])

@@ -22,7 +22,7 @@ for weirdsimthingy in np.arange(0,1):
     deltaTau = 10
     sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    numberperwalker=6
+    numberperwalker=18
     bunchofjobs=False
     ContWeights=True
     debug=False
