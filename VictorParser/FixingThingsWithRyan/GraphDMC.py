@@ -164,17 +164,17 @@ def monomerOHstretch():
 #plotthispls('T',"10K timesteps, 8k Walkers")
 #plotthispls('0',"10K timesteps, 8k Walkers")
 #plotthispls("8Kwalkers","10K timesteps, 8k Walkers", 5,)
-
+#Original Time Step Study
 # plotthispls("8kWalkers10Sims","10K timesteps, 8k Walkers",10,'deltaTau')
 # plotthispls("50kau","50k AU total time, 8k Walkers",5,'deltaTau')
 # plotthispls("50kauContW","50k AU total time, 8k Walkers, cont. weighting",5,'deltaTau')
 # xrange=11
 # plt.xlabel("Time step size")
-plotthispls('EnsembleSize3au',"3 AU time step, 50k AU total time",5,"walkers")
-plotthispls('EnsembleSize5p5au',"5.5 AU time step, 50k AU total time",5,"walkers")
-plotthispls('EnsembleSize10au',"10 AU time step, 100k AU total time",5,"walkers")
-xrange=28001
-plt.xlabel("Walkers")
+# plotthispls('EnsembleSize3au',"3 AU time step, 50k AU total time",5,"walkers")
+# plotthispls('EnsembleSize5p5au',"5.5 AU time step, 50k AU total time",5,"walkers")
+# plotthispls('EnsembleSize10au',"10 AU time step, 100k AU total time",5,"walkers")
+# xrange=28001
+# plt.xlabel("Walkers")
 # plotthispls('HSize1',"Hydrogen, 8k Walkers, 1 AU 50k total time",5,"deltaTau")
 # plotthispls('HSize2',"Deuterium, 8k Walkers, 1 AU 50k total time",5,"deltaTau")
 # plotthispls('HSizeHalf',"Halfdrogen, 8k Walkers, 1 AU 50k total time",5,"deltaTau")
@@ -208,39 +208,79 @@ plt.xlabel("Walkers")
 # plt.xlabel("DeltaTau")
 # xrange=11
 
-# plotthispls('MillionHex3',"Million Walker Hexamer",5,"million")
+# plotthispls('MillionTau1',"Million Walker Hexamer",5,"million")
+# exit()
 
 # annesx=[1,2,4,6,8,10]
 # annesy=[4638.013643,4636.841567,4640.912251,4634.310842,4630.756066,4625.998072]
 # annesstv=[0.857867151,1.731900076,0.8240529069,2.987696314,1.41147454,2.237955771]
 # plt.errorbar(annesx,annesy,annesstv,label="Anne's Calcs, 20K walkers")
-
+#
 # plotthispls('NewCont20',"C weighting Hexamer 20k Walkers",5,"deltaTau")
-#plotthispls('NewCont10',"Continuous weighting Hexamer with 10k Walkers",5,"deltaTau")
-#plotthispls('NewCont5',"Continuous weighting Hexamer with 5k Walkers",5,"deltaTau")
-#plotthispls('NewCont3',"Continuous weighting Hexamer with 3k Walkers",5,"deltaTau")
-#plotthispls('NewCont2',"Continuous weighting Hexamer with 2k Walkers",5,"deltaTau")
-# plt.xlabel("DeltaTau")
-# xrange=11
+# plotthispls('NewCont10',"Continuous weighting Hexamer with 10k Walkers",5,"deltaTau")
+# plotthispls('NewCont5',"Continuous weighting Hexamer with 5k Walkers",5,"deltaTau")
+# plotthispls('NewCont3',"Continuous weighting Hexamer with 3k Walkers",5,"deltaTau")
+# plotthispls('NewCont2',"Continuous weighting Hexamer with 2k Walkers",5,"deltaTau")
 
 # plotthispls('NewDesc20',"D weighting Hexamer 20k Walkers",5,"deltaTau")
 #plotthispls('NewDesc2',"Discrete weighting Hexamer with 2k Walkers",5,"deltaTau")
 
 
-plotthispls('C24K',"C weighting Monomer with 24k Walkers",4,"walkers")
-plotthispls('D24K',"D weighting Monomer with 24k Walkers",4,"walkers")
+# plotthispls('C24K',"C weighting Monomer with 24k Walkers",4,"deltaTau")
+# plotthispls('D24K',"D weighting Monomer with 24k Walkers",4,"walkers")
+# plotthispls('NewDisc/Mon28K',"NewDesc",5,'deltaTau')
+# plotthispls("NewDisc/Hex8k","Disc Hexamer 8k walkers",5,'deltaTau')
+# plotthispls('NewDisc/Mon8Total',"Monomer8k",5,'deltaTau')
+
+#EnsembleSizeWeird
+# plotthispls('NewDisc/Mon28K',"28kNew",5,'deltaTau')
+# plotthispls('EnsembleSize/4k',"4k",5,'deltaTau')
+# plotthispls('EnsembleSize/8k',"8k",5,'deltaTau')
+# plotthispls('EnsembleSize/12k',"12k",5,'deltaTau')
+# plotthispls('EnsembleSize/16k',"16k",5,'deltaTau')
+# plotthispls('EnsembleSize/20k',"20k",5,'deltaTau')
+# plotthispls('EnsembleSize/24k',"24k",5,'deltaTau')
+# plotthispls('EnsembleSize/28k',"28k",5,'deltaTau')
+plt.xlabel("DeltaTau")
+xrange=11
+plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="Minimum")
+
+# plotthispls('Newer/MonD8k',"8k monomer",5,'deltaTau')
+# plotthispls('Newer/NucMonD24k',"24k nuclear mass",5,'deltaTau')
+# plotthispls('Newer/MonD28k',"28k monomer",5,'deltaTau')
+
+
+plotthispls('Newer/HexD30k',"30k hex",5,'deltaTau')
+plotthispls('Newer/HexD20k',"20k hex",5,'deltaTau')
+#plotthispls('Newer/Million1tau',"Million Walker Hexamer",5,"million")
+
+
+#Hexamer
+# plotthispls("NewDisc/Hex8k","Disc Hexamer 8k walkers",5,'deltaTau')
+annesx=[1,6,8,10]
+annesy=[4631.6704,4634.310842,4630.756066,4625.998072]
+annesstv=[3.829429433,2.987696314,1.41147454,2.237955771]
+plt.errorbar(annesx,annesy,annesstv,label="Anne's Calcs, 20K walkers")
+# plotthispls('NewCont20',"C weighting Hexamer 20k Walkers",5,"deltaTau")
+
+# plt.xlabel("DeltaTau")
+# xrange=11
 
 #plotthispls('HSize',"8k walkers, 50k AU total time",5,'size')
 #xrange=3
+
+
 
 
 plt.ylabel("Energy per Molecule (Wavenumbers)")
 #plt.xlabel("Walkers")
 #plt.xlabel("Time step size")
 plt.ylim(4625, 4645)
-plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="Minimum of Potential Surface")
+# plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="Minimum of Potential Surface")
 millionref=4631.355306
-# plt.plot(np.arange(xrange), np.repeat(millionref, xrange), 'k',label="Million Hexamer Average dt=10",color="purple")
+plt.plot(np.arange(xrange), np.repeat(millionref, xrange), 'k',label="Million Hexamer Average dt=10",color="purple")
+milliontau1ref=4637.552884526753
+plt.plot(np.arange(xrange), np.repeat(milliontau1ref, xrange), 'k',label="Million Hexamer Single dt=1",color="blue")
 # plt.plot(np.arange(xrange), np.repeat(1500, xrange), 'k',label="Minimum of Potential Surface")
 plt.legend(loc='top right')
 plt.show()

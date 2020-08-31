@@ -16,7 +16,7 @@ for weirdsimthingy in np.arange(0,1):
     # omega = 3000 * (4.5563e-6)
     # k = m * (omega ** 2)
     dimensions = 3
-    watersperwalker=6
+    watersperwalker=1
     numWalkers = 2000
     numTimeSteps = 1000
     deltaTau = 10
@@ -25,6 +25,7 @@ for weirdsimthingy in np.arange(0,1):
     bunchofjobs=False
     ContWeights=False
     debut=False
+    atomicMass=False
     print('running')
     filename='DMCResult'
     energieslist=[]
@@ -75,10 +76,16 @@ for weirdsimthingy in np.arange(0,1):
                 countmove += 1
                 if countmove % 3 == 0:
                     # Oxygen
-                    m = 15.9994 * amutoelectron
+                    if atomicMass==True:
+                        m = 15.9994 * amutoelectron
+                    else:
+                        m =99.76/100*29148.94642+0.048/100*30979.52128+0.20/100*32810.46286
                 else:
                     # Hydrogen
-                    m = 1.00794 * amutoelectron
+                    if atomicMass == True:
+                        m = 1.00794 * amutoelectron
+                    else:
+                        m=99.985/100*1836.152697+3670.483031/100*(100-99.985)
                 sigma = np.sqrt(deltaTau / m)
                 randomCoord = np.zeros((dimensions))
                 for coordinate in np.arange(0, dimensions):

@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from VictorParser.loadnpz import *
 #data=np.load('NickFiles/VictorData/h2o6_book/SortedWithoutProblems.npz')
-data=np.load('FixingThingsWithRyan/NewHexDisc/npzFiles/1k_10_0Data.npz')
+data=np.load('FixingThingsWithRyan/EnsembleSize/16k/npzFiles/16k_3point0_0Data.npz')
+print(data['iwalkers'])
 #1k_10_0Data.npz
 coords=data['coords']
 weights=data['weights']
