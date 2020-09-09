@@ -14,12 +14,12 @@ __all__ = [
 ]
 
 ## Objects: put all the classes we're defining here
-class Walker:
-    def __init__(self,initialCoords):
+class Walkers:
+    def __init__(self,initialCoords,initialWalkers):
         '''
         :param initialCoords: initial coordinates for each of our walkers
         '''
-        self.coords=np.array([initialCoords])
+        self.coords=np.array([initialCoords]*initialWalkers)
         #Give the walkers coords, weights, and a potential energy value.
         #This is done by self.parameterICareAbout=WhatIWantItToBe
         #Coords should be a number of atoms x dimensions of the system matrix.
@@ -106,7 +106,7 @@ mass = (massH * massO) / (massH + massO)
 initialWalkers=1000
 deltaTau=1
 numTimeSteps=1000
-myWalkers = [Walker(0) for r in range(initialWalkers)]
+Data = Walkers(0)
 run(initialWalkers,deltaTau,numTimeSteps,)
 moveRandomly(sigma)
 print()

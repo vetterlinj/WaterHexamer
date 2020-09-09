@@ -17,15 +17,15 @@ for weirdsimthingy in np.arange(0,1):
     # k = m * (omega ** 2)
     dimensions = 3
     watersperwalker=1
-    numWalkers = 2000
+    numWalkers = 200
     numTimeSteps = 1000
     deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=False
+    bunchofjobs=True
     ContWeights=False
     debut=False
-    atomicMass=False
+    atomicMass=True
     print('running')
     filename='DMCResult'
     energieslist=[]
@@ -38,10 +38,11 @@ for weirdsimthingy in np.arange(0,1):
 
         numWalkers=int(args.list[0])
         deltaTau=int(args.list[2])
+        alphaTau=int(args.list[3])
         numTimeSteps = int(args.list[1])/deltaTau
         namedeltaTau = str(deltaTau).replace(".", "point")
         # sigma = np.sqrt(deltaTau / m)
-        alpha = 1 / (2 * deltaTau)
+        alpha = 1 / (2 * alphaTau)
     for i in np.arange(0,5):
         if bunchofjobs == True:
             if ContWeights==True:

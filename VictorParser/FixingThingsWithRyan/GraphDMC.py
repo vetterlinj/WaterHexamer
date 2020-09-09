@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from VictorParser.Constants import *
 import os,glob
+from matplotlib.pyplot import figure
+from matplotlib.ticker import MaxNLocator
 def plotthispls(location,label,numberofeach,xaxis):
     path=location+"/npzFiles/"
     # npzFilePaths = glob.glob(os.path.join(path, '*.npz'))
@@ -245,22 +247,32 @@ plt.xlabel("DeltaTau")
 xrange=11
 plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="Minimum")
 
-# plotthispls('Newer/MonD8k',"8k monomer",5,'deltaTau')
+#plotthispls('Newer/MonD8k',"8k monomer",5,'deltaTau')
 # plotthispls('Newer/NucMonD24k',"24k nuclear mass",5,'deltaTau')
-# plotthispls('Newer/MonD28k',"28k monomer",5,'deltaTau')
+# plotthispls('Newer/MonD28k',"24k atomic mass",5,'deltaTau')
+# plotthispls('EnsembleSize/24k',"24k atomic mass",5,'deltaTau')
 
 
-plotthispls('Newer/HexD30k',"30k hex",5,'deltaTau')
-plotthispls('Newer/HexD20k',"20k hex",5,'deltaTau')
+# plotthispls('Newer/MonWalkTau1',"Monomers deltaTau=1",5,'walkers')
+
+# plotthispls('Newer/HexD30k',"30k hex",5,'deltaTau')
+# plotthispls('Newer/HexD20k',"20k hex",5,'deltaTau')
 #plotthispls('Newer/Million1tau',"Million Walker Hexamer",5,"million")
+#plotthispls('Newer/Million2tau',"Million Walker Hexamer",5,"million")
+
+# plotthispls('Newer/Alpha10_10k',"alpha=10, 10k walkers",5,'deltaTau')
+plotthispls('Newer/Alpha10_20k',"alpha=10, 20k walkers",5,'deltaTau')
+plotthispls('Newer/Alpha1_20k',"alpha=1, 20k walkers",5,'deltaTau')
+# plotthispls('Newer/Alpha1_10k',"alpha=1, 10k walkers",5,'deltaTau')
+plotthispls('EnsembleSize/20k',"20k alpha varies",5,'deltaTau')
 
 
 #Hexamer
 # plotthispls("NewDisc/Hex8k","Disc Hexamer 8k walkers",5,'deltaTau')
-annesx=[1,6,8,10]
-annesy=[4631.6704,4634.310842,4630.756066,4625.998072]
-annesstv=[3.829429433,2.987696314,1.41147454,2.237955771]
-plt.errorbar(annesx,annesy,annesstv,label="Anne's Calcs, 20K walkers")
+# annesx=[1,6,8,10]
+# annesy=[4631.6704,4634.310842,4630.756066,4625.998072]
+# annesstv=[3.829429433,2.987696314,1.41147454,2.237955771]
+# plt.errorbar(annesx,annesy,annesstv,label="Anne's Calcs, 20K walkers")
 # plotthispls('NewCont20',"C weighting Hexamer 20k Walkers",5,"deltaTau")
 
 # plt.xlabel("DeltaTau")
@@ -273,16 +285,16 @@ plt.errorbar(annesx,annesy,annesstv,label="Anne's Calcs, 20K walkers")
 
 
 plt.ylabel("Energy per Molecule (Wavenumbers)")
-#plt.xlabel("Walkers")
+# plt.xlabel("Walkers")
 #plt.xlabel("Time step size")
 plt.ylim(4625, 4645)
-# plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="Minimum of Potential Surface")
-millionref=4631.355306
-plt.plot(np.arange(xrange), np.repeat(millionref, xrange), 'k',label="Million Hexamer Average dt=10",color="purple")
-milliontau1ref=4637.552884526753
-plt.plot(np.arange(xrange), np.repeat(milliontau1ref, xrange), 'k',label="Million Hexamer Single dt=1",color="blue")
-# plt.plot(np.arange(xrange), np.repeat(1500, xrange), 'k',label="Minimum of Potential Surface")
+plt.yticks(np.arange(4626, 4644, 2))
+# millionref=4631.355306
+# plt.plot(np.arange(xrange), np.repeat(millionref, xrange), 'k',label="Million Hexamer dt=10",color="purple")
+# milliontau1ref=4637.152974
+# plt.plot(np.arange(xrange), np.repeat(milliontau1ref, xrange), 'k',label="Million Hexamer dt=1",color="blue")
 plt.legend(loc='top right')
+
 plt.show()
 # monomerOHstretch()
 
