@@ -17,15 +17,16 @@ for weirdsimthingy in np.arange(0,1):
     # k = m * (omega ** 2)
     dimensions = 3
     watersperwalker=1
-    numWalkers = 200
-    numTimeSteps = 1000
+    numWalkers = 2000
+    numTimeSteps = 2000
     deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=True
+    bunchofjobs=False
     ContWeights=False
     debut=False
     atomicMass=True
+    CarringtonPot=False
     print('running')
     filename='DMCResult'
     energieslist=[]
@@ -38,11 +39,11 @@ for weirdsimthingy in np.arange(0,1):
 
         numWalkers=int(args.list[0])
         deltaTau=int(args.list[2])
-        alphaTau=int(args.list[3])
+        #alphaTau=int(args.list[3])
         numTimeSteps = int(args.list[1])/deltaTau
         namedeltaTau = str(deltaTau).replace(".", "point")
         # sigma = np.sqrt(deltaTau / m)
-        alpha = 1 / (2 * alphaTau)
+        # alpha = 1 / (2 * alphaTau)
     for i in np.arange(0,5):
         if bunchofjobs == True:
             if ContWeights==True:
@@ -93,13 +94,65 @@ for weirdsimthingy in np.arange(0,1):
                     randomCoord[coordinate] += np.random.normal(0, sigma)
                 coords[atom] += randomCoord
             return coords
+        if CarringtonPot==False:
+            def getDemEnergies(coords,watersperwalker):
+                #check
+                #################
+                # reshapedcoords = np.reshape(coords, (len(coords) // 3, 3, 3))
+                # listenergies = h2o_pot.calc_hoh_pot(reshapedcoords, len(coords) // 3)
+                # energies = np.add.reduceat(listenergies, np.arange(0, len(listenergies), watersperwalker))
+                # return energies
+                return quarticEnergies(coords,watersperwalker)
+        if CarringtonPot==True:
+            def getDemEnergies(coords,watersperwalker):
+                #Carrington
+                #make things work
+                #ajtoJtoHartree
+                aJconv=(10**(-18)*(2.293712*10**(17)))
+                #Angstroms/Bohr
+                AinvConv=0.529177
+                frr = 8.428 * aJconv * AinvConv ** 2
+                frrr = -51.91 * aJconv * AinvConv ** 3
+                frrrr = 248.7 * aJconv * AinvConv ** 4
+                ftt = 0.6990 * aJconv
+                fttt = -0.9186 * aJconv
+                ftttt = -0.1 * aJconv
+                frrprime = -0.101 * aJconv * AinvConv ** 2
+                frrrprime = 0.645 * aJconv * AinvConv ** 3
+                frt = 0.219 * aJconv * AinvConv
+                frtt = -0.314 * aJconv * AinvConv
+                frrt = 1.341 * aJconv * AinvConv**2
+                frrprimet = 0.414 * aJconv * AinvConv**2
+                frrtt = -2.0 * aJconv * AinvConv ** 2
+                #radians
+                #can check frequencies
+                Re=0.9575/AinvConv
+                Anglee=104.51
+                V=[]
+                for molecule in np.arange(len(coords)/3):
+                    actualcoord=int(molecule*3)
+                    diffs1=coords[actualcoord+1,:] - coords[actualcoord+2,:]
+                    diffs2=coords[ actualcoord,:] - coords[ actualcoord+2,:]
+                    #diffs3=coords[:, 0] - coords[:, 1]
+                    dist1 = np.linalg.norm(diffs1, axis=0)
+                    dist2 = np.linalg.norm(diffs2, axis=0)
+                    #dist3=np.linalg.norm(diffs3, axis=0)
 
-        def getDemEnergies(coords,watersperwalker):
-            #check
-            reshapedcoords = np.reshape(coords, (len(coords) // 3, 3, 3))
-            listenergies = h2o_pot.calc_hoh_pot(reshapedcoords, len(coords) // 3)
-            energies = np.add.reduceat(listenergies, np.arange(0, len(listenergies), watersperwalker))
-            return energies
+                    cosine_angle = np.dot(diffs1, diffs2) / (np.linalg.norm(diffs1) * np.linalg.norm(diffs2))
+                    angle = np.degrees(np.arccos(cosine_angle))
+
+
+                    theta=(angle-Anglee)/360*2*np.pi
+                    r1=dist1-Re
+                    r2=dist2-Re
+                    V12=0.5*frr*(r1**2+r2**2)+0.5*(ftt*theta**2)+frrprime*r1*r2+frt*theta*(r1+r2)
+                    V3=(1/6)*frrr*(r1**3+r2**3)+(1/6)*fttt*theta**3+0.5*frtt*(theta**2)*(r1+r2)
+                    V4=0.1*frrrprime*(r1**2*r2+r1*r2**2)
+                    V5=0.5*frrt*theta*(r1**2+r2**2)+frrprimet*r1*r2*theta
+                    V6=(1/24)*frrrr*(r1**4+r2**4)+(1/24)*ftttt*theta**4
+                    V7=(1/4)*frrtt*(r1**2+r2**2)*theta**2
+                    V.append(V12+V3+V4+V5+V6+V7)
+                return V
         if ContWeights==False:
             def getVref(energies,alpha,weights,numWalkers,coords,watersperwalker):
                 #if debut==True:
@@ -231,6 +284,12 @@ for weirdsimthingy in np.arange(0,1):
         startingGeo=np.array([[0.9578400,0.0000000,0.0000000],
                              [-0.2399535,0.9272970,0.0000000],
                      [0.0000000,0.0000000,0.0000000]])/angstr * 1.01
+        # perfectGeo=np.array([[-np.cos(75.49/360*2*np.pi)*1.8094134854689452,np.sin(75.49/360*2*np.pi)*1.8094134854689452,0.0000000],
+        #              [1.8094134854689452,0.0000000,0.0000000],
+        #              [0.0000000,0.0000000,0.0000000]])
+        # print(np.average(quarticEnergies(perfectGeo,1))/(4.5563e-6))
+        # exit()
+        ###################
         coords=np.zeros((numWalkers*(3*watersperwalker),dimensions))
         weights=np.ones(numWalkers)
         for i in np.arange(0,numWalkers*watersperwalker):
@@ -239,13 +298,16 @@ for weirdsimthingy in np.arange(0,1):
             coords[i*3+2]+=startingGeo[2]
         count=0
         fullEnergies=[]
+
         for i in np.arange(0,numTimeSteps):
             count+=1
             if count %100 ==0:
                 print(count)
                 print(Vref / (4.5563e-6) / (watersperwalker))
+                print(len(coords)/3)
             if i==0:
                 energies=getDemEnergies(coords,watersperwalker)
+                print(np.average(energies)/(4.5563e-6))
                 Vref = getVref(energies, alpha, weights, numWalkers, coords, watersperwalker)
             coords=randommovement(coords,dimensions,deltaTau)
             energies=getDemEnergies(coords,watersperwalker)

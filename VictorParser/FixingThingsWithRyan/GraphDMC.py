@@ -15,18 +15,19 @@ def plotthispls(location,label,numberofeach,xaxis):
         npyFilePaths.sort()
         print(npyFilePaths)
         for file in npyFilePaths:
+            print(file)
             data = np.load(file)
             data = np.array(data)
             averager = []
             # for a in np.arange(len(data)/6,len(data)):
             #     averager.append(data[(a)])
             millionnumber=np.average(data[1000:len(data)]) / 6 / 4.5563e-6
-            print(np.average(data[2000:len(data)]) / 6 / 4.5563e-6)
-            print(np.std(data[2000:len(data)]) / 6 / 4.5563e-6)
+            # print(np.average(data[2000:len(data)]) / 6 / 4.5563e-6)
+            # print(np.std(data[2000:len(data)]) / 6 / 4.5563e-6)
             print(np.average(data[2000:len(data)]) / 4.5563e-6)
             print(np.std(data[2000:len(data)]) / 4.5563e-6)
             plt.plot(np.arange(11), np.repeat(millionnumber, 11), 'k', label="Dtau=10 Million Number after 6000 time steps",color='purple')
-            return
+        return
     secondcount=0
     count=0
     Xval=[]
@@ -245,7 +246,7 @@ def monomerOHstretch():
 # plotthispls('EnsembleSize/28k',"28k",5,'deltaTau')
 plt.xlabel("DeltaTau")
 xrange=11
-plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="Minimum")
+
 
 #plotthispls('Newer/MonD8k',"8k monomer",5,'deltaTau')
 # plotthispls('Newer/NucMonD24k',"24k nuclear mass",5,'deltaTau')
@@ -254,6 +255,7 @@ plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="Minimum")
 
 
 # plotthispls('Newer/MonWalkTau1',"Monomers deltaTau=1",5,'walkers')
+# xrange=28001
 
 # plotthispls('Newer/HexD30k',"30k hex",5,'deltaTau')
 # plotthispls('Newer/HexD20k',"20k hex",5,'deltaTau')
@@ -261,10 +263,12 @@ plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="Minimum")
 #plotthispls('Newer/Million2tau',"Million Walker Hexamer",5,"million")
 
 # plotthispls('Newer/Alpha10_10k',"alpha=10, 10k walkers",5,'deltaTau')
-plotthispls('Newer/Alpha10_20k',"alpha=10, 20k walkers",5,'deltaTau')
-plotthispls('Newer/Alpha1_20k',"alpha=1, 20k walkers",5,'deltaTau')
+# plotthispls('Newer/Alpha10_20k',"alpha=10, 20k walkers",5,'deltaTau')
+# plotthispls('Newer/Alpha1_20k',"alpha=1, 20k walkers",5,'deltaTau')
 # plotthispls('Newer/Alpha1_10k',"alpha=1, 10k walkers",5,'deltaTau')
-plotthispls('EnsembleSize/20k',"20k alpha varies",5,'deltaTau')
+# plotthispls('EnsembleSize/20k',"20k alpha varies",5,'deltaTau')
+
+# plotthispls('HalfMilMon','HalfMilMon',5,'million')
 
 
 #Hexamer
@@ -283,7 +287,7 @@ plotthispls('EnsembleSize/20k',"20k alpha varies",5,'deltaTau')
 
 
 
-
+plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="P-S ZPE")
 plt.ylabel("Energy per Molecule (Wavenumbers)")
 # plt.xlabel("Walkers")
 #plt.xlabel("Time step size")
@@ -293,6 +297,8 @@ plt.yticks(np.arange(4626, 4644, 2))
 # plt.plot(np.arange(xrange), np.repeat(millionref, xrange), 'k',label="Million Hexamer dt=10",color="purple")
 # milliontau1ref=4637.152974
 # plt.plot(np.arange(xrange), np.repeat(milliontau1ref, xrange), 'k',label="Million Hexamer dt=1",color="blue")
+coolhalfmilliontau1ref=4631.54
+plt.plot(np.arange(xrange), np.repeat(coolhalfmilliontau1ref, xrange), 'k',label="Half mil mon dt=10",color="pink")
 plt.legend(loc='top right')
 
 plt.show()

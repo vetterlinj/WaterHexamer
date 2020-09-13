@@ -90,8 +90,8 @@ class DMC:
                 print(np.average(fullEnergies[int(len(fullEnergies) / 2):-1, 1]))
                 exit()
             plt.savefig(filename)
-            np.savez(resultsfilename + "Data", energies=fullEnergies, coords=coords, iwalkers=numWalkers,
-                     deltatau=deltaTau, timesteps=numTimeSteps, weights=weights, watersperwalker=watersperwalker)
+            np.savez(resultsfilename + "Data", energies=fullEnergies, coords=self.coords, iwalkers=self.numWalkers,
+                     deltatau=self.deltaTau, timesteps=self.numTimeSteps, weights=self.weights, watersperwalker=self.watersperwalker)
             averageEnergy = np.average(fullEnergies[int(len(fullEnergies) / 2):-1, 1])
             stdEnergy = np.std(fullEnergies[int(len(fullEnergies) / 2):-1, 1])
             energieslist.append(averageEnergy)
