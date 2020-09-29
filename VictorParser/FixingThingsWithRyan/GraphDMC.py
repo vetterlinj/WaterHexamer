@@ -8,8 +8,76 @@ def plotthispls(location,label,numberofeach,xaxis):
     path=location+"/npzFiles/"
     # npzFilePaths = glob.glob(os.path.join(path, '*.npz'))
     npzFilePaths = glob.glob(os.path.join(path, '*.npz'))
-    npzFilePaths.sort()
+    npzFilePaths.sort(reverse=True)
     print(npzFilePaths)
+    if xaxis=='hunthou':
+        npyFilePaths = glob.glob(os.path.join(path, '*.npy'))
+        npyFilePaths.sort()
+        print(npyFilePaths)
+        orangeslist=[]
+        ploty=[]
+        plotx=[]
+        plotstd=[]
+        for startvalue in np.arange(2000,3000,1000):
+            for file in npyFilePaths:
+                print(file)
+                data = np.load(file)
+                data = np.array(data)
+                averager = []
+                # for a in np.arange(len(data)/6,len(data)):
+                #     averager.append(data[(a)])
+                print(len(data))
+                # millionnumber = np.average(data[2000:len(data)]) / 4.5563e-6
+                millionnumber = np.average(data[startvalue:20000]) / 4.5563e-6
+                # print(np.average(data[2000:len(data)]) / 6 / 4.5563e-6)
+                # print(np.std(data[2000:len(data)]) / 6 / 4.5563e-6)
+                orangeslist.append(millionnumber)
+                print(len(data))
+                print(np.average(data[2000:len(data)]) / 4.5563e-6)
+                print(np.std(data[2000:len(data)]) / 4.5563e-6)
+                # plt.plot(np.arange(11), np.repeat(millionnumber, 11), 'k',
+                #          label="Dtau=10 Million Number after 6000 time steps", color='purple')
+            print(f"Average is "+str(np.average(orangeslist)))
+            print('Stdev is '+str(np.std(orangeslist)))
+            plotx.append(10000-startvalue)
+            ploty.append(np.average(orangeslist))
+            plotstd.append(np.std(orangeslist))
+        largerx=[]
+        largery=[]
+        largerstd=[]
+        blueslist=[]
+        # for startvalue in np.arange(1000,11000,1000):
+        #     for file in npyFilePaths:
+        #         print(file)
+        #         data = np.load(file)
+        #         data = np.array(data)
+        #         averager = []
+        #         # for a in np.arange(len(data)/6,len(data)):
+        #         #     averager.append(data[(a)])
+        #         print(len(data))
+        #         # millionnumber = np.average(data[2000:len(data)]) / 4.5563e-6
+        #         millionnumber = np.average(data[startvalue:20000]) / 4.5563e-6
+        #         # print(np.average(data[2000:len(data)]) / 6 / 4.5563e-6)
+        #         # print(np.std(data[2000:len(data)]) / 6 / 4.5563e-6)
+        #         blueslist.append(millionnumber)
+        #         print(len(data))
+        #         print(np.average(data[2000:len(data)]) / 4.5563e-6)
+        #         print(np.std(data[2000:len(data)]) / 4.5563e-6)
+        #         # plt.plot(np.arange(11), np.repeat(millionnumber, 11), 'k',
+        #         #          label="Dtau=10 Million Number after 6000 time steps", color='purple')
+        #     print(f"Average is "+str(np.average(blueslist)))
+        #     print('Stdev is '+str(np.std(blueslist)))
+        #     largerx.append(20000-startvalue)
+        #     largery.append(np.average(blueslist))
+        #     largerstd.append(np.std(blueslist))
+
+        plt.errorbar(plotx, ploty, plotstd, label="10K timesteps")
+        plt.errorbar(largerx, largery, largerstd, label="20K timesteps")
+        plt.legend(loc='top right')
+        plt.ylabel("ZPE (Cm-1)")
+        plt.xlabel("Num Time Steps Averaged Over")
+        plt.show()
+        exit()
     if xaxis=='million':
         npyFilePaths = glob.glob(os.path.join(path, '*.npy'))
         npyFilePaths.sort()
@@ -37,7 +105,7 @@ def plotthispls(location,label,numberofeach,xaxis):
     refcount=0
     for file in npzFilePaths:
         data=np.load(file)
-        if count ==(numberofeach-1):
+        if count ==(numberofeach):
             count-=numberofeach
         if count==0:
             if xaxis=='deltaTau' or xaxis=='deltaTauRel' or xaxis=='deltaTauH' or xaxis=="deltaTauD" or xaxis=="deltaTauE":
@@ -58,11 +126,15 @@ def plotthispls(location,label,numberofeach,xaxis):
                 secondcount+=1
         count +=1
         fullEnergies=data['energies']
+        print(len(fullEnergies))
         # print(np.average(fullEnergies[1000:2000,1]))
+        # if data['deltatau']==10:
+        #     fullEnergies=data['energies'][0:2000,:]
+        #     print()
         averageEnergy = np.average(fullEnergies[int(len(fullEnergies) / 2):-1, 1])
         # averageEnergy = np.average(fullEnergies[9950:-1, 1])
         groupedY.append(averageEnergy)
-        if count ==(numberofeach-1):
+        if count ==(numberofeach):
             if refcount==0 and xaxis=='deltaTauRel':
                 refcount+=1
                 Yref=np.average(groupedY)
@@ -73,14 +145,18 @@ def plotthispls(location,label,numberofeach,xaxis):
                 moleculesperwalker=18
             if xaxis=='deltaTauD':
                 moleculesperwalker=2
+            print(groupedY)
             print((np.average(groupedY)-Yref)/moleculesperwalker)
+
             Yval.append((np.average(groupedY)-Yref)/moleculesperwalker)
             Ystd.append(np.std(groupedY)/moleculesperwalker)
+    print(np.sum(Ystd) / moleculesperwalker)
     sort=np.argsort(Xval)
     Xval=np.array(Xval)[sort]
     Yval=np.array(Yval)[sort]
     Ystd=np.array(Ystd)[sort]
     plt.errorbar(Xval,Yval,Ystd,label=label)
+    print(f"{label},{Xval},{Yval},{Ystd}")
     plt.title(f"{numberofeach} Replicates")
 
 
@@ -242,8 +318,8 @@ def monomerOHstretch():
 # plotthispls('EnsembleSize/12k',"12k",5,'deltaTau')
 # plotthispls('EnsembleSize/16k',"16k",5,'deltaTau')
 # plotthispls('EnsembleSize/20k',"20k",5,'deltaTau')
-# plotthispls('EnsembleSize/24k',"24k",5,'deltaTau')
-# plotthispls('EnsembleSize/28k',"28k",5,'deltaTau')
+#plotthispls('EnsembleSize/24k',"24k",5,'deltaTau')
+#plotthispls('EnsembleSize/28k',"28k",5,'deltaTauRel')
 plt.xlabel("DeltaTau")
 xrange=11
 
@@ -287,18 +363,46 @@ xrange=11
 
 
 
-plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="P-S ZPE")
-plt.ylabel("Energy per Molecule (Wavenumbers)")
+# plotthispls('PotExpl/HOTen',"HOTen",4,'deltaTauRel')
+# plotthispls('PotExpl/HOH',"HOH",4,'deltaTauRel')
+# plotthispls('PotExpl/HOD',"HOD",4,'deltaTauRel')
+# plotthispls('PotExpl/HalfOD',"HalfOD",4,'deltaTauRel')
+# plotthispls('PotExpl/HalfOH',"HalfOH",4,'deltaTauRel')
+
+
+# plotthispls('PotExpl/UncorrHOH',"Uncorr HOH",5,'deltaTauRel')
+# plotthispls('PotExpl/UncorrHOD',"Uncorr HOD",5,'deltaTauRel')
+# plotthispls('PotExpl/QuarticExp',"Carrington",5,'deltaTauRel')
+# plotthispls('PotExpl/HOD',"HOD",4,'deltaTauRel')
+# plotthispls('PotExpl/HOH',"HOH",4,'deltaTauRel')
+
+plotthispls('150kHexamer','150kHexamer',5,'hunthou')
+
+# plotthispls('Ten2O_20K',"Ten2O",5,'deltaTauRel')
+# plotthispls('D2O_20K',"D2O",5,'deltaTauRel')
+# plotthispls('PotExpl/HOH',"H2O",4,'deltaTauRel')
+# plotthispls('Half2O_20K',"Half2O",5,'deltaTauRel')
+
+
+
+
+
+
+
+
+# plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="P-S ZPE")
+plt.ylabel("Energy per Molecule (Cm-1)")
 # plt.xlabel("Walkers")
 #plt.xlabel("Time step size")
-plt.ylim(4625, 4645)
-plt.yticks(np.arange(4626, 4644, 2))
+# plt.ylim(4625, 4645)
+# plt.yticks(np.arange(4626, 4644, 2))
 # millionref=4631.355306
 # plt.plot(np.arange(xrange), np.repeat(millionref, xrange), 'k',label="Million Hexamer dt=10",color="purple")
 # milliontau1ref=4637.152974
 # plt.plot(np.arange(xrange), np.repeat(milliontau1ref, xrange), 'k',label="Million Hexamer dt=1",color="blue")
 coolhalfmilliontau1ref=4631.54
-plt.plot(np.arange(xrange), np.repeat(coolhalfmilliontau1ref, xrange), 'k',label="Half mil mon dt=10",color="pink")
+
+# plt.plot(np.arange(xrange), np.repeat(coolhalfmilliontau1ref, xrange), 'k',label="Half mil mon dt=10",color="pink")
 plt.legend(loc='top right')
 
 plt.show()

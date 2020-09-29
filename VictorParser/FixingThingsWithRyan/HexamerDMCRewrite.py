@@ -3,6 +3,9 @@ import argparse
 import matplotlib.pyplot as plt
 import sys
 import h2o_pot
+TryUncorrPot=False
+if TryUncorrPot==True:
+    import h2o_uncorr_pot
 import os
 # from VictorParser.Constants import *
 # import sys
@@ -22,7 +25,7 @@ for weirdsimthingy in np.arange(0,1):
     deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=False
+    bunchofjobs=True
     ContWeights=False
     debut=False
     atomicMass=True
@@ -43,7 +46,7 @@ for weirdsimthingy in np.arange(0,1):
         numTimeSteps = int(args.list[1])/deltaTau
         namedeltaTau = str(deltaTau).replace(".", "point")
         # sigma = np.sqrt(deltaTau / m)
-        # alpha = 1 / (2 * alphaTau)
+        alpha = 1 / (2 * deltaTau)
     for i in np.arange(0,5):
         if bunchofjobs == True:
             if ContWeights==True:
@@ -76,18 +79,29 @@ for weirdsimthingy in np.arange(0,1):
             amutoelectron = 1.000000000000000000 / 6.02213670000e23 / 9.10938970000e-28
             for atom in np.arange(0, len(coords)):
                 countmove += 1
+                # if countmove % 3 == 0:
+                #     # Oxygen
+                #     if atomicMass==True:
+                #         m = 15.9994 * amutoelectron
+                #     else:
+                #         m =99.76/100*29148.94642+0.048/100*30979.52128+0.20/100*32810.46286
+                # else:
+                #     # Hydrogen
+                #     if atomicMass == True:
+                #         m = 1.00794 * amutoelectron
+                #     else:
+                #         m=99.985/100*1836.152697+3670.483031/100*(100-99.985)
                 if countmove % 3 == 0:
                     # Oxygen
-                    if atomicMass==True:
-                        m = 15.9994 * amutoelectron
-                    else:
-                        m =99.76/100*29148.94642+0.048/100*30979.52128+0.20/100*32810.46286
+
+                    m = 15.9994 * amutoelectron
+                # elif countmove %3 == 1:
                 else:
                     # Hydrogen
-                    if atomicMass == True:
-                        m = 1.00794 * amutoelectron
-                    else:
-                        m=99.985/100*1836.152697+3670.483031/100*(100-99.985)
+                    m = 1.00794 * amutoelectron
+                # elif countmove %3 == 2:
+                #     # Deuterium
+                #     m = 2.014102 * amutoelectron
                 sigma = np.sqrt(deltaTau / m)
                 randomCoord = np.zeros((dimensions))
                 for coordinate in np.arange(0, dimensions):
@@ -98,11 +112,15 @@ for weirdsimthingy in np.arange(0,1):
             def getDemEnergies(coords,watersperwalker):
                 #check
                 #################
-                # reshapedcoords = np.reshape(coords, (len(coords) // 3, 3, 3))
+                reshapedcoords = np.reshape(coords, (len(coords) // 3, 3, 3))
                 # listenergies = h2o_pot.calc_hoh_pot(reshapedcoords, len(coords) // 3)
-                # energies = np.add.reduceat(listenergies, np.arange(0, len(listenergies), watersperwalker))
-                # return energies
-                return quarticEnergies(coords,watersperwalker)
+                if TryUncorrPot==True:
+                    listenergies = h2o_uncorr_pot.calc_hoh_pot(reshapedcoords, len(coords) // 3)
+                else:
+                    listenergies = h2o_pot.calc_hoh_pot(reshapedcoords, len(coords) // 3)
+                energies = np.add.reduceat(listenergies, np.arange(0, len(listenergies), watersperwalker))
+                return energies
+
         if CarringtonPot==True:
             def getDemEnergies(coords,watersperwalker):
                 #Carrington

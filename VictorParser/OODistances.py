@@ -11,70 +11,86 @@ def OODistance(coords,waterone,watertwo,weights):
     oranges=np.square(oranges)
     oranges=oranges[:,0]+oranges[:,1]+oranges[:,2]
     oranges=np.sqrt(oranges)
-    oranges=oranges*weights
-    #*0.529177
-    return np.sum(oranges)
-    #return oranges
+    oranges=oranges#*weights#*0.529177
+    #return np.sum(oranges)
+    return oranges
 
 
-path='d2o6_prism/PythonData/d2o6_prism.npz'
-dataname='d2o6_prism'
 def bigOne(path,dataname,cageorprism):
-    # file = np.load(path+dataname+'.npz')
-    # coords=file['coords']
-    # weights=file['weights']
+    file = np.load(path+dataname+'.npz')
+    coords=file['coords']
+    weights=file['weights']
     numbers=[]
     count=0
-    coordsdict, weightsdict = concatenateseparatenpz(path)
+    # coordsdict, weightsdict = concatenateseparatenpz(path)
     if cageorprism == 'prism':
         distances = [[0, 1], [1, 2], [1, 3], [2, 3], [3, 4], [4, 5], [4, 0], [5, 0], [5, 2]]
     elif cageorprism == 'cage':
         distances = [[0, 1], [0, 3], [0, 4], [1, 2], [1, 5], [2, 3], [2, 4], [3, 5]]
+    elif cageorprism =='OO':
+        distances = [[0, 1], [0,2], [0, 3], [0, 4], [0,5], [1, 2], [1, 3],[1, 4], [1, 5], [2, 3], [2, 4],[2, 5],[3,4], [3, 5],[4,5]]
     results = {}
     actualResults={}
     actualErrors={}
-    for number,coords in coordsdict.items():
-        count+=1
-    #OODistance(coords,0,1,weights)
+    resultslist=[]
 
-        numbers.append(number)
-        weights=weightsdict[f'{number}']
-        sumweights=np.sum(weights)
-        for i in distances:
-            results[f'{number} {i} distance']=OODistance(coords,i[0],i[1],weights)/sumweights
-
+    sumweights = np.sum(weights)
     for i in distances:
-        sum=[]
-        for labels in numbers:
-            sum.append(results[f'{labels} {i} distance'])
-        actualResults[f'{i} distance'] = np.average(sum)
-        actualErrors[f'{i} distance std']=np.std(sum)
+        if i==[0, 1]:
+            resultslist=OODistance(coords, i[0], i[1], weights) #/ sumweights
+            resultslist=np.array(resultslist)
+            realweights=weights
+        else:
+            newlist=OODistance(coords, i[0], i[1], weights) #/ sumweights
+            newlist=np.array(newlist)
+            resultslist=np.concatenate((resultslist, newlist))
+            realweights=np.concatenate((realweights,weights))
 
-    resultsFile = open('Results/OODistances/' + f"{dataname}_OODistances.txt", 'w')
+    # for number,coords in coordsdict.items():
+    #     count+=1
+    # #OODistance(coords,0,1,weights)
+    #
+    #     numbers.append(number)
+    #     weights=weightsdict[f'{number}']
+    #     sumweights=np.sum(weights)
+    #     for i in distances:
+    #         #results[f'{number} {i} distance']=OODistance(coords,i[0],i[1],weights)/sumweights
+    #         np.concatenate(resultslist,OODistance(coords,i[0],i[1],weights)/sumweights)
+            #resultslist.append(OODistance(coords,i[0],i[1],weights)/sumweights)
+    #Take each distance, add to list, weights should be len(distances)*walkers
+    # for i in distances:
+    #     sum=[]
+    #     for labels in numbers:
+    #         sum.append(results[f'{labels} {i} distance'])
+    #     actualResults[f'{i} distance'] = np.average(sum)
+    #     actualErrors[f'{i} distance std']=np.std(sum)
+
+    # resultsFile = open('Results/OODistances/' + f"{dataname}_OODistances.txt", 'w')
     # if allH == True:
     #     resultsFile.write('Results for homogeneous:' + "\n")
     # elif mostlyD == True:
     #     resultsFile.write('Hydrogen Position is: ' + str(deuterium) + "\n")
     # else:
     #     resultsFile.write('Deuterium Position is: ' + str(deuterium) + "\n")
-    for name, value in actualResults.items():
-        changedname=name.replace('0','D')
-        changedname=changedname.replace('1','C')
-        changedname = changedname.replace('2', 'E')
-        changedname = changedname.replace('3', 'B')
-        changedname = changedname.replace('4', 'F')
-        changedname = changedname.replace('4', 'A')
-        resultsFile.write(changedname + "\n")
-        resultsFile.write(str(value) + "\n")
-        resultsFile.write(str(actualErrors[f'{name} std'])+"\n")
-    resultsFile.close()
+    # for name, value in actualResults.items():
+    #     changedname=name.replace('0','D')
+    #     changedname=changedname.replace('1','C')
+    #     changedname = changedname.replace('2', 'E')
+    #     changedname = changedname.replace('3', 'B')
+    #     changedname = changedname.replace('4', 'F')
+    #     changedname = changedname.replace('4', 'A')
+    #     resultsFile.write(changedname + "\n")
+    #     resultsFile.write(str(value) + "\n")
+    #     resultsFile.write(str(actualErrors[f'{name} std'])+"\n")
+    # resultsFile.close()
     #Plotting:
-    # amp, xx = np.histogram(OODistance(coords,0,1), bins=75, range=(2, 4), density=True, weights=weights)
-    # xx = 0.5 * (xx[1:] + xx[:-1])
-    # plt.plot(xx, amp, label='H1')
-    # plt.title(f'Water')
-    # plt.savefig(f'Results/OOTest.png')
-    # plt.clf()
+    amp, xx = np.histogram(resultslist, bins=75, range=(2, 7), density=True, weights=realweights)
+    xx = 0.5 * (xx[1:] + xx[:-1])
+    plt.plot(xx, amp, label='H1')
+    plt.title(f'Water')
+    plt.show()
+    plt.savefig(f'Results/OOTest.png')
+    plt.clf()
 #10 and 17?
 #stdev: block average the 5 then compute stdev of the second
 
@@ -117,6 +133,6 @@ def bigOne(path,dataname,cageorprism):
 #     allH=False
 #     bigOne(path,dataname)
 
-path="IlahieStuff/MandelsthdamPartialWavefunctions/onlylast/"
-bigOne(path,'PartialMandelsthdamonlylast5','cage')
+path="IlahieStuff/Hex150K/wavefunctions5/"
+bigOne(path,'wavefunction_19','OO')
 
