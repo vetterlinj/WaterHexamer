@@ -14,12 +14,12 @@ massH=1.008*amutoelectron
 massO=16*amutoelectron
 m=(massH*massO)/(massH+massO)
 #omega=1
-omega=3000*(4.5563e-6)
+omega=3700*(4.5563e-6)
 k=m*(omega**2)
 dimensions=1
-numWalkers=3000
-numTimeSteps=1000
-deltaTau=1
+numWalkers=5000
+numTimeSteps=2000
+deltaTau=10
 sigma=np.sqrt(deltaTau/m)
 alpha=1/(2*deltaTau)
 # V=h2o_pot.calc_hoh_pot
@@ -36,7 +36,7 @@ def getDemEnergies(coords):
 
 
 def birthandDeath(coords, energies, alpha, numWalkers, weights, deltaTau):
-    averageEnergy = np.average(energies,weights)
+    averageEnergy = np.average(energies)
     # print('averageEnergy:')
     # print(averageEnergy)
     #Vref = averageEnergy - (alpha / numWalkers * (len(coords) - numWalkers))
@@ -75,7 +75,7 @@ def birthandDeath(coords, energies, alpha, numWalkers, weights, deltaTau):
     birthlist = np.array(birthlist)
     appendlist = np.array(appendlist)
     if len(birthlist) == 0:
-        print('empty')
+        #print('empty')
         birthedcoords = deletedcoords
         birthedweights = deletedweights
     else:
@@ -104,7 +104,7 @@ fullEnergies=np.array(fullEnergies)
 # plt.errorbar(fullEnergies[:,0],fullEnergies[:,1],yerr=fullEnergies[:,2])
 plt.plot(fullEnergies[:,0],fullEnergies[:,1]/(4.5563e-6))
 averageEnergy=np.average(fullEnergies[int(len(fullEnergies)/2):,1])
-print(averageEnergy)
+print(averageEnergy/(4.5563e-6))
 plt.show()
 
 

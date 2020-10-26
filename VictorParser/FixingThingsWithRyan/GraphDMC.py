@@ -126,12 +126,12 @@ def plotthispls(location,label,numberofeach,xaxis):
                 secondcount+=1
         count +=1
         fullEnergies=data['energies']
-        print(len(fullEnergies))
+        #print(len(fullEnergies))
         # print(np.average(fullEnergies[1000:2000,1]))
         # if data['deltatau']==10:
         #     fullEnergies=data['energies'][0:2000,:]
         #     print()
-        averageEnergy = np.average(fullEnergies[int(len(fullEnergies) / 2):-1, 1])
+        averageEnergy = np.average(fullEnergies[int(len(fullEnergies) / 10):-1, 1])
         # averageEnergy = np.average(fullEnergies[9950:-1, 1])
         groupedY.append(averageEnergy)
         if count ==(numberofeach):
@@ -146,6 +146,8 @@ def plotthispls(location,label,numberofeach,xaxis):
             if xaxis=='deltaTauD':
                 moleculesperwalker=2
             print(groupedY)
+            # for ekenent in np.arange(0,len(groupedY)):
+            #     print(groupedY[ekenent])
             print((np.average(groupedY)-Yref)/moleculesperwalker)
 
             Yval.append((np.average(groupedY)-Yref)/moleculesperwalker)
@@ -157,6 +159,8 @@ def plotthispls(location,label,numberofeach,xaxis):
     Ystd=np.array(Ystd)[sort]
     plt.errorbar(Xval,Yval,Ystd,label=label)
     print(f"{label},{Xval},{Yval},{Ystd}")
+    ytot=np.sum(Ystd)
+    print(f"{label}, {Yval[1]}, {ytot}")
     plt.title(f"{numberofeach} Replicates")
 
 
@@ -376,14 +380,24 @@ xrange=11
 # plotthispls('PotExpl/HOD',"HOD",4,'deltaTauRel')
 # plotthispls('PotExpl/HOH',"HOH",4,'deltaTauRel')
 
-plotthispls('150kHexamer','150kHexamer',5,'hunthou')
+# plotthispls('150kHexamer','150kHexamer',5,'hunthou')
 
 # plotthispls('Ten2O_20K',"Ten2O",5,'deltaTauRel')
 # plotthispls('D2O_20K',"D2O",5,'deltaTauRel')
 # plotthispls('PotExpl/HOH',"H2O",4,'deltaTauRel')
 # plotthispls('Half2O_20K',"Half2O",5,'deltaTauRel')
 
-
+# plotthispls("FixedOH/0p7","0.7",5,'deltaTauRel')
+# plotthispls("FixedOH/0p8","0.8",5,'deltaTauRel')
+# plotthispls("FixedOH/0p9","0.9",5,'deltaTauRel')
+# plotthispls("FixedOH/1p0","1.0",5,'deltaTauRel')
+# plotthispls("FixedOH/1p1","1.1",5,'deltaTauRel')
+# plotthispls("FixedOH/1p2","1.2",5,'deltaTauRel')
+# plotthispls("FixedOH/1p3","1.3",5,'deltaTauRel')
+# plotthispls("FixedAngle","OHFixed",5,'deltaTauRel')
+# plotthispls('FixedAngle/Carrington',"OHFixed",5,'deltaTauRel')
+# plotthispls('FixedAngle/AllbutOH',"OHFixed",5,'deltaTau')
+plotthispls('FixedAngle/CAllbutOH',"OHFixed",15,'deltaTau')
 
 
 

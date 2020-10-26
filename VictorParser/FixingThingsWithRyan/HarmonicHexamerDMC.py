@@ -14,17 +14,21 @@ for weirdsimthingy in np.arange(0,1):
     massO = 16 * amutoelectron
     m = (massH * massO) / (massH + massO)
     # omega=1
-    omega = 3000 * (4.5563e-6)
+    omega = 3700 * (4.5563e-6)
+    wexe = 1 * (4.5563e-6)
     k = m * (omega ** 2)
+    De=np.square(omega)/(4*wexe)
+    beta=np.sqrt(k/(2*De))
+
     dimensions = 1
-    numWalkers = 1000
-    numTimeSteps = 1000
-    deltaTau = 10
+    numWalkers = 2000
+    numTimeSteps = 2000
+    deltaTau = 1
     sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    numberperwalker=18
+    numberperwalker=1
     bunchofjobs=False
-    ContWeights=True
+    ContWeights=False
     debug=False
     print('running')
     filename='DMCResult'
@@ -45,7 +49,6 @@ for weirdsimthingy in np.arange(0,1):
     for i in np.arange(0,5):
         if bunchofjobs == True:
             filename = "Results/Multiple/Harmonic/" + fnameExtension + f"_{namedeltaTau}_{i}"
-            print(filename)
             resultsfilename = "Results/Multiple/Harmonic/npzFiles/" + fnameExtension + f"_{namedeltaTau}_{i}"
             # fnameExtension=sys.argv[1]
             # arg2=sys.argv[2]
@@ -70,7 +73,8 @@ for weirdsimthingy in np.arange(0,1):
             return coords
 
         def getDemEnergies(coords):
-            listenergies=0.5*k*(np.square(coords))
+            #listenergies = 0.5 * k * (np.square(coords))
+            listenergies=De*np.square(1-np.exp(-beta*coords))
             energies = np.add.reduceat(listenergies, np.arange(0, len(listenergies), numberperwalker))
             return energies
         if ContWeights==False:

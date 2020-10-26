@@ -20,8 +20,8 @@ for weirdsimthingy in np.arange(0,1):
     # k = m * (omega ** 2)
     dimensions = 3
     watersperwalker=1
-    numWalkers = 2000
-    numTimeSteps = 2000
+    numWalkers = 1000
+    numTimeSteps = 1000
     deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
@@ -76,8 +76,34 @@ for weirdsimthingy in np.arange(0,1):
         def randommovement(coords,dimensions,deltaTau):
             #check
             countmove = 0
+            eqdegrees=104.5080029
+            eqangle=eqdegrees/360*2*np.pi
             amutoelectron = 1.000000000000000000 / 6.02213670000e23 / 9.10938970000e-28
-            for atom in np.arange(0, len(coords)):
+            mO =1/( 15.9994 * amutoelectron)
+            mH =1/( 1.00794 * amutoelectron)
+            mOH=(1/mO)*(1/mH)/((1/mO)+(1/mH))
+            OHsigma=np.sqrt(deltaTau/mOH)
+            mnormal= 1.00794 * amutoelectron
+            normalsigma=np.sqrt(deltaTau / mnormal)
+            masssymm=mH+mO*(1+np.cos(eqangle))
+            sigmasymm = np.sqrt(deltaTau * masssymm)
+            massasymm=mH+mO*(1-np.cos(eqangle))
+            sigmaasymm = np.sqrt(deltaTau * massasymm)
+            for molecule in np.arange(0, len(coords)/3):
+                dOH=np.random.normal(0,OHsigma)
+                s=np.random.normal(0, sigmasymm)
+                a=np.random.normal(0, sigmaasymm)
+                r1=(s+a)/np.sqrt(2)
+                r2 = (s - a) / np.sqrt(2)
+                randomCoord = np.zeros((dimensions))
+                # randomCoord[0] += r1
+                randomCoord[0] += dOH
+                coords[np.int(molecule*3)]+=randomCoord
+                '''randomCoord2 = np.zeros((dimensions))
+                randomCoord2[0]-=r2*np.cos((180-eqdegrees)/360*2*np.pi)
+                randomCoord2[1] += r2 * np.sin((180 - eqdegrees) / 360 * 2 * np.pi)
+                coords[np.int(molecule * 3)+1] += randomCoord2'''
+            '''for atom in np.arange(0, len(coords)):
                 countmove += 1
                 # if countmove % 3 == 0:
                 #     # Oxygen
@@ -93,7 +119,6 @@ for weirdsimthingy in np.arange(0,1):
                 #         m=99.985/100*1836.152697+3670.483031/100*(100-99.985)
                 if countmove % 3 == 0:
                     # Oxygen
-
                     m = 15.9994 * amutoelectron
                 # elif countmove %3 == 1:
                 else:
@@ -106,7 +131,7 @@ for weirdsimthingy in np.arange(0,1):
                 randomCoord = np.zeros((dimensions))
                 for coordinate in np.arange(0, dimensions):
                     randomCoord[coordinate] += np.random.normal(0, sigma)
-                coords[atom] += randomCoord
+                coords[atom] += randomCoord '''
             return coords
         if CarringtonPot==False:
             def getDemEnergies(coords,watersperwalker):
@@ -299,9 +324,10 @@ for weirdsimthingy in np.arange(0,1):
                     birthedweights=np.append(deletedweights,appendlist)
                 return birthedcoords,birthedweights
         angstr=0.529177
+        #middlenumber=[-0.2399535,0.9272970,0.0000000]
         startingGeo=np.array([[0.9578400,0.0000000,0.0000000],
                              [-0.2399535,0.9272970,0.0000000],
-                     [0.0000000,0.0000000,0.0000000]])/angstr * 1.01
+                     [0.0000000,0.0000000,0.0000000]])/angstr#*1.01
         # perfectGeo=np.array([[-np.cos(75.49/360*2*np.pi)*1.8094134854689452,np.sin(75.49/360*2*np.pi)*1.8094134854689452,0.0000000],
         #              [1.8094134854689452,0.0000000,0.0000000],
         #              [0.0000000,0.0000000,0.0000000]])
@@ -323,9 +349,24 @@ for weirdsimthingy in np.arange(0,1):
                 print(count)
                 print(Vref / (4.5563e-6) / (watersperwalker))
                 print(len(coords)/3)
+                biglist=[]
+                # for molecule in np.arange(0, len(coords), 3):
+                #     actualcoord = molecule
+                #     actualcoord = np.int(actualcoord)
+                #     # if coords[actualcoord][1]!=0:
+                #     #     print('ahhh')
+                #     actualcoord += 1
+                #     print((coords[(actualcoord, 1)]))
+                #     print((coords[(actualcoord, 1)] / np.abs(coords[(actualcoord, 0)])))
+                #     invinput = (coords[(actualcoord, 1)] / np.abs(coords[(actualcoord, 0)]))
+                #     degrees = np.arctan(invinput) * 360 / 2 / np.pi
+                #     print(degrees)
+                #     # print(invinput)
+                #     biglist.append(180 - (np.arctan(invinput) * 360 / (2 * np.pi)))
+                # print(np.average(biglist))
             if i==0:
                 energies=getDemEnergies(coords,watersperwalker)
-                print(np.average(energies)/(4.5563e-6))
+                #print(np.average(energies)/(4.5563e-6))
                 Vref = getVref(energies, alpha, weights, numWalkers, coords, watersperwalker)
             coords=randommovement(coords,dimensions,deltaTau)
             energies=getDemEnergies(coords,watersperwalker)
@@ -339,7 +380,24 @@ for weirdsimthingy in np.arange(0,1):
             fullEnergies.append([i,Vref/(watersperwalker*4.5563e-6)])
 
             # print(len(coords))
+
         # coords = randommovement(coords, dimensions, deltaTau)
+        biglist=[]
+        # for molecule in np.arange(0, len(coords), 3):
+        #     actualcoord = molecule
+        #     actualcoord = np.int(actualcoord)
+        #     # if coords[actualcoord][1]!=0:
+        #     #     print('ahhh')
+        #     actualcoord += 1
+        #     # print((coords[(actualcoord, 1)]))
+        #     # print((coords[(actualcoord, 1)] / np.abs(coords[(actualcoord, 0)])))
+        #     invinput = (coords[(actualcoord, 1)] / np.abs(coords[(actualcoord, 0)]))
+        #     degrees = np.arctan(invinput) * 360 / 2 / np.pi
+        #     print(degrees)
+        #     # print(invinput)
+        #     biglist.append(180 - (np.arctan(invinput) * 360 / (2 * np.pi)))
+        # print(np.average(biglist))
+        # exit()
         # energies = getDemEnergies(coords,watersperwalker)
         # Vref=getVref(energies,alpha,weights,numWalkers,coords,watersperwalker)
         # fullEnergies.append([numTimeSteps, Vref / (watersperwalker*4.5563e-6)])

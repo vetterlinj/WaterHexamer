@@ -17,34 +17,40 @@ def OODistance(coords,waterone,watertwo,weights):
 
 
 def bigOne(path,dataname,cageorprism):
-    file = np.load(path+dataname+'.npz')
-    coords=file['coords']
-    weights=file['weights']
-    numbers=[]
-    count=0
-    # coordsdict, weightsdict = concatenateseparatenpz(path)
-    if cageorprism == 'prism':
-        distances = [[0, 1], [1, 2], [1, 3], [2, 3], [3, 4], [4, 5], [4, 0], [5, 0], [5, 2]]
-    elif cageorprism == 'cage':
-        distances = [[0, 1], [0, 3], [0, 4], [1, 2], [1, 5], [2, 3], [2, 4], [3, 5]]
-    elif cageorprism =='OO':
-        distances = [[0, 1], [0,2], [0, 3], [0, 4], [0,5], [1, 2], [1, 3],[1, 4], [1, 5], [2, 3], [2, 4],[2, 5],[3,4], [3, 5],[4,5]]
-    results = {}
-    actualResults={}
-    actualErrors={}
-    resultslist=[]
+    resultslist = []
+    realweights=[]
+    for wfnnumber in np.arange(1,6,1):
+        path= f"IlahieStuff/Hex150K/wavefunctions{wfnnumber}/"
+        for filenumber in np.arange(1,20,1):
+            file = np.load(path+dataname+str(filenumber)+'.npz')
+            coords=file['coords']
+            weights=file['weights']
+            numbers=[]
+            count=0
+            # coordsdict, weightsdict = concatenateseparatenpz(path)
+            if cageorprism == 'prism':
+                distances = [[0, 1], [1, 2], [1, 3], [2, 3], [3, 4], [4, 5], [4, 0], [5, 0], [5, 2]]
+            elif cageorprism == 'cage':
+                distances = [[0, 1], [0, 3], [0, 4], [1, 2], [1, 5], [2, 3], [2, 4], [3, 5]]
+            elif cageorprism =='OO':
+                distances = [[0, 1], [0,2], [0, 3], [0, 4], [0,5], [1, 2], [1, 3],[1, 4], [1, 5], [2, 3], [2, 4],[2, 5],[3,4], [3, 5],[4,5]]
+            results = {}
+            actualResults={}
+            actualErrors={}
 
-    sumweights = np.sum(weights)
-    for i in distances:
-        if i==[0, 1]:
-            resultslist=OODistance(coords, i[0], i[1], weights) #/ sumweights
-            resultslist=np.array(resultslist)
-            realweights=weights
-        else:
-            newlist=OODistance(coords, i[0], i[1], weights) #/ sumweights
-            newlist=np.array(newlist)
-            resultslist=np.concatenate((resultslist, newlist))
-            realweights=np.concatenate((realweights,weights))
+
+            sumweights = np.sum(weights)
+            # for i in distances:
+            #     if i==[0, 1]:
+            #         resultslist=OODistance(coords, i[0], i[1], weights) #/ sumweights
+            #         resultslist=np.array(resultslist)
+            #         realweights=weights
+            #     else:
+            for i in distances:
+                newlist=OODistance(coords, i[0], i[1], weights) #/ sumweights
+                newlist=np.array(newlist)
+                resultslist=np.concatenate((resultslist, newlist))
+                realweights=np.concatenate((realweights,weights))
 
     # for number,coords in coordsdict.items():
     #     count+=1
@@ -84,11 +90,14 @@ def bigOne(path,dataname,cageorprism):
     #     resultsFile.write(str(actualErrors[f'{name} std'])+"\n")
     # resultsFile.close()
     #Plotting:
-    amp, xx = np.histogram(resultslist, bins=75, range=(2, 7), density=True, weights=realweights)
+
+    amp, xx = np.histogram(resultslist, bins=60, range=(2, 7), density=True, weights=realweights)
     xx = 0.5 * (xx[1:] + xx[:-1])
     plt.plot(xx, amp, label='H1')
-    plt.title(f'Water')
-    plt.show()
+    plt.xlabel("rOO (Å)")
+    plt.ylabel("Probability Amplitude")
+    plt.title(f'All Wavefunctions')
+    # plt.show()
     plt.savefig(f'Results/OOTest.png')
     plt.clf()
 #10 and 17?
@@ -133,6 +142,36 @@ def bigOne(path,dataname,cageorprism):
 #     allH=False
 #     bigOne(path,dataname)
 
-path="IlahieStuff/Hex150K/wavefunctions5/"
-bigOne(path,'wavefunction_19','OO')
+# path="IlahieStuff/Hex150K/wavefunctions1/"
+# bigOne(path,'wavefunction_','OO')
 
+
+
+def checkangle(location):
+    path=location+"/npzFiles/"
+    npzFilePaths = glob.glob(os.path.join(path, '*.npz'))
+    npzFilePaths.sort(reverse=True)
+    biglist=[]
+    for file in npzFilePaths:
+        data=np.load(file)
+        coords=data['coords']
+        for molecule in np.arange(0, len(coords), 3):
+            actualcoord = molecule
+            actualcoord = np.int(actualcoord)
+            # if coords[actualcoord][1]!=0:
+            #     print('ahhh')
+            actualcoord += 1
+            # print((coords[(actualcoord, 1)]))
+            # print((coords[(actualcoord, 1)] / np.abs(coords[(actualcoord, 0)])))
+            invinput = (coords[(actualcoord, 1)] / np.abs(coords[(actualcoord, 0)]))
+            degrees = np.arctan(invinput) * 360 / 2 / np.pi
+            print(degrees)
+            # print(invinput)
+            biglist.append(180 - (np.arctan(invinput) * 360 / (2 * np.pi)))
+    print(np.average(biglist))
+    print(np.std(biglist))
+    print(min(biglist))
+    print(max(biglist))
+    # print(biglist[[x>105 for x in biglist]])
+    # print(biglist[[x<104 for x in biglist]])
+checkangle("FixingThingsWithRyan/FixedAngle")
