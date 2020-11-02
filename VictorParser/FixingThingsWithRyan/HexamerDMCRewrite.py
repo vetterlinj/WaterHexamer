@@ -25,7 +25,7 @@ for weirdsimthingy in np.arange(0,1):
     deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=True
+    bunchofjobs=False
     ContWeights=False
     debut=False
     atomicMass=True
@@ -82,6 +82,8 @@ for weirdsimthingy in np.arange(0,1):
             mO =1/( 15.9994 * amutoelectron)
             mH =1/( 1.00794 * amutoelectron)
             mOH=(1/mO)*(1/mH)/((1/mO)+(1/mH))
+            print(mOH)
+            exit()
             OHsigma=np.sqrt(deltaTau/mOH)
             mnormal= 1.00794 * amutoelectron
             normalsigma=np.sqrt(deltaTau / mnormal)

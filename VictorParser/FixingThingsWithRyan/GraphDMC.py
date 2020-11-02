@@ -131,7 +131,7 @@ def plotthispls(location,label,numberofeach,xaxis):
         # if data['deltatau']==10:
         #     fullEnergies=data['energies'][0:2000,:]
         #     print()
-        averageEnergy = np.average(fullEnergies[int(len(fullEnergies) / 10):-1, 1])
+        averageEnergy = np.average(fullEnergies[2000:-1, 1])
         # averageEnergy = np.average(fullEnergies[9950:-1, 1])
         groupedY.append(averageEnergy)
         if count ==(numberofeach):
@@ -159,7 +159,7 @@ def plotthispls(location,label,numberofeach,xaxis):
     Ystd=np.array(Ystd)[sort]
     plt.errorbar(Xval,Yval,Ystd,label=label)
     print(f"{label},{Xval},{Yval},{Ystd}")
-    ytot=np.sum(Ystd)
+    ytot=np.sqrt(np.sum(np.square(Ystd)))
     print(f"{label}, {Yval[1]}, {ytot}")
     plt.title(f"{numberofeach} Replicates")
 
@@ -339,8 +339,10 @@ xrange=11
 
 # plotthispls('Newer/HexD30k',"30k hex",5,'deltaTau')
 # plotthispls('Newer/HexD20k',"20k hex",5,'deltaTau')
-#plotthispls('Newer/Million1tau',"Million Walker Hexamer",5,"million")
-#plotthispls('Newer/Million2tau',"Million Walker Hexamer",5,"million")
+# plotthispls('Newer/Million1tau',"Million Walker Hexamer",5,"million")
+# plotthispls('Newer/Million2tau',"Million Walker Hexamer",5,"million")
+# print(27825.317307160512/6)
+# print(29.6/6)
 
 # plotthispls('Newer/Alpha10_10k',"alpha=10, 10k walkers",5,'deltaTau')
 # plotthispls('Newer/Alpha10_20k',"alpha=10, 20k walkers",5,'deltaTau')
@@ -348,7 +350,9 @@ xrange=11
 # plotthispls('Newer/Alpha1_10k',"alpha=1, 10k walkers",5,'deltaTau')
 # plotthispls('EnsembleSize/20k',"20k alpha varies",5,'deltaTau')
 
-# plotthispls('HalfMilMon','HalfMilMon',5,'million')
+#plotthispls('HalfMilMon','HalfMilMon',5,'million')
+# print(np.average([4631.640993828734,4631.600171495534,4631.540885537849,4631.382960342728]))
+# print(np.std([4631.640993828734,4631.600171495534,4631.540885537849,4631.382960342728]))
 
 
 #Hexamer
@@ -396,12 +400,14 @@ xrange=11
 # plotthispls("FixedOH/1p3","1.3",5,'deltaTauRel')
 # plotthispls("FixedAngle","OHFixed",5,'deltaTauRel')
 # plotthispls('FixedAngle/Carrington',"OHFixed",5,'deltaTauRel')
-# plotthispls('FixedAngle/AllbutOH',"OHFixed",5,'deltaTau')
-plotthispls('FixedAngle/CAllbutOH',"OHFixed",15,'deltaTau')
+# plotthispls('FixedAngle/AllbutOH',"OHFixed",25,'deltaTau')
+# plotthispls('FixedAngle/CAllbutOH',"OHFixed",15,'deltaTau')
+# plotthispls('MorseOH/Mon20k',"MorseOsc",5,'deltaTauRel')
+
+#plotthispls('MorseOH/Dimer20k',"Dimer MorseOsc",5,'deltaTauRel')
 
 
-
-
+print(4637.152974-4631.355306)
 
 
 # plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="P-S ZPE")
