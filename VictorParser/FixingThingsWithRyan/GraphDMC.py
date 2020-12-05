@@ -28,13 +28,13 @@ def plotthispls(location,label,numberofeach,xaxis):
                 #     averager.append(data[(a)])
                 print(len(data))
                 # millionnumber = np.average(data[2000:len(data)]) / 4.5563e-6
-                millionnumber = np.average(data[startvalue:20000]) / 4.5563e-6
+                millionnumber = np.average(data[startvalue:len(data)]) / 4.5563e-6
                 # print(np.average(data[2000:len(data)]) / 6 / 4.5563e-6)
                 # print(np.std(data[2000:len(data)]) / 6 / 4.5563e-6)
                 orangeslist.append(millionnumber)
                 print(len(data))
-                print(np.average(data[2000:len(data)]) / 4.5563e-6)
-                print(np.std(data[2000:len(data)]) / 4.5563e-6)
+                print(np.average(data[6000:len(data)]) / 4.5563e-6)
+                print(np.std(data[6000:len(data)]) / 4.5563e-6)
                 # plt.plot(np.arange(11), np.repeat(millionnumber, 11), 'k',
                 #          label="Dtau=10 Million Number after 6000 time steps", color='purple')
             print(f"Average is "+str(np.average(orangeslist)))
@@ -105,10 +105,13 @@ def plotthispls(location,label,numberofeach,xaxis):
     refcount=0
     for file in npzFilePaths:
         data=np.load(file)
+        # print(data['iwalkers'])
+        # print(data['timesteps'])
+
         if count ==(numberofeach):
             count-=numberofeach
         if count==0:
-            if xaxis=='deltaTau' or xaxis=='deltaTauRel' or xaxis=='deltaTauH' or xaxis=="deltaTauD" or xaxis=="deltaTauE":
+            if xaxis=='deltaTau' or xaxis=='deltaTauRel' or xaxis=='deltaTauH' or xaxis=="deltaTauD" or xaxis=="deltaTauE" or xaxis=='deltaTauS':
                 groupedY =[]
                 Xval.append(data['deltatau'])
             elif xaxis=='walkers':
@@ -125,15 +128,32 @@ def plotthispls(location,label,numberofeach,xaxis):
                 Xval.append(multiplier)
                 secondcount+=1
         count +=1
-        fullEnergies=data['energies']
+        fullEnergies=data['energies']#/(4.5563e-6)
+        averageEnergy = np.average(fullEnergies[2000:-1, 1])
         #print(len(fullEnergies))
         # print(np.average(fullEnergies[1000:2000,1]))
-        # if data['deltatau']==10:
-        #     fullEnergies=data['energies'][0:2000,:]
-        #     print()
-        averageEnergy = np.average(fullEnergies[2000:-1, 1])
+        if xaxis=='deltaTauS':
+            if data['deltatau']==10:
+                fullEnergies=data['energies'][0:4000,:]
+                averageEnergy = np.average(fullEnergies[3000:-1, 1])
+            if data['deltatau']==8:
+                fullEnergies=data['energies'][0:2500,:]
+                averageEnergy = np.average(fullEnergies[1250:-1, 1])
+            if data['deltatau']==6:
+                fullEnergies=data['energies'][0:3333,:]
+                averageEnergy = np.average(fullEnergies[1666:-1, 1])
+            if data['deltatau']==4:
+                fullEnergies=data['energies'][0:5000,:]
+                averageEnergy = np.average(fullEnergies[2500:-1, 1])
+            if data['deltatau']==2:
+                fullEnergies=data['energies'][0:10000,:]
+                averageEnergy = np.average(fullEnergies[5000:-1, 1])
+            if data['deltatau']==1:
+                fullEnergies=data['energies'][0:20000,:]
+                averageEnergy = np.average(fullEnergies[10000:-1, 1])
         # averageEnergy = np.average(fullEnergies[9950:-1, 1])
         groupedY.append(averageEnergy)
+
         if count ==(numberofeach):
             if refcount==0 and xaxis=='deltaTauRel':
                 refcount+=1
@@ -145,14 +165,16 @@ def plotthispls(location,label,numberofeach,xaxis):
                 moleculesperwalker=18
             if xaxis=='deltaTauD':
                 moleculesperwalker=2
-            print(groupedY)
-            # for ekenent in np.arange(0,len(groupedY)):
-            #     print(groupedY[ekenent])
-            print((np.average(groupedY)-Yref)/moleculesperwalker)
+            #print(groupedY)
+            for ekenent in np.arange(0,len(groupedY)):
+                print(groupedY[ekenent])
+            print("Next:")
+            # print((np.average(groupedY)-Yref)/moleculesperwalker)
 
             Yval.append((np.average(groupedY)-Yref)/moleculesperwalker)
             Ystd.append(np.std(groupedY)/moleculesperwalker)
-    print(np.sum(Ystd) / moleculesperwalker)
+
+    # print(np.sum(Ystd) / moleculesperwalker)
     sort=np.argsort(Xval)
     Xval=np.array(Xval)[sort]
     Yval=np.array(Yval)[sort]
@@ -259,7 +281,7 @@ def monomerOHstretch():
 # xrange=28001
 # plt.xlabel("Walkers")
 # plotthispls('HSize1',"Hydrogen, 8k Walkers, 1 AU 50k total time",5,"deltaTau")
-# plotthispls('HSize2',"Deuterium, 8k Walkers, 1 AU 50k total time",5,"deltaTau")
+# plotthispls('HSize2',"Deuterium, 8k Walkers, 50k total time",5,"deltaTauRel")
 # plotthispls('HSizeHalf',"Halfdrogen, 8k Walkers, 1 AU 50k total time",5,"deltaTau")
 # plt.xlabel("DeltaTau")
 
@@ -380,14 +402,14 @@ xrange=11
 
 # plotthispls('PotExpl/UncorrHOH',"Uncorr HOH",5,'deltaTauRel')
 # plotthispls('PotExpl/UncorrHOD',"Uncorr HOD",5,'deltaTauRel')
-# plotthispls('PotExpl/QuarticExp',"Carrington",5,'deltaTauRel')
+# plotthispls('PotExpl/QuarticExp',"Carrington",5,'deltaTau')
 # plotthispls('PotExpl/HOD',"HOD",4,'deltaTauRel')
 # plotthispls('PotExpl/HOH',"HOH",4,'deltaTauRel')
 
 # plotthispls('150kHexamer','150kHexamer',5,'hunthou')
 
 # plotthispls('Ten2O_20K',"Ten2O",5,'deltaTauRel')
-# plotthispls('D2O_20K',"D2O",5,'deltaTauRel')
+# plotthispls('D2O_20K',"D2O",5,'deltaTau')
 # plotthispls('PotExpl/HOH',"H2O",4,'deltaTauRel')
 # plotthispls('Half2O_20K',"Half2O",5,'deltaTauRel')
 
@@ -398,8 +420,8 @@ xrange=11
 # plotthispls("FixedOH/1p1","1.1",5,'deltaTauRel')
 # plotthispls("FixedOH/1p2","1.2",5,'deltaTauRel')
 # plotthispls("FixedOH/1p3","1.3",5,'deltaTauRel')
-# plotthispls("FixedAngle","OHFixed",5,'deltaTauRel')
-# plotthispls('FixedAngle/Carrington',"OHFixed",5,'deltaTauRel')
+# plotthispls("FixedAngle","FixedAnglePS",20,'deltaTau')
+# plotthispls('FixedAngle/Carrington',"FixedAngleHC",5,'deltaTau')
 # plotthispls('FixedAngle/AllbutOH',"OHFixed",25,'deltaTau')
 # plotthispls('FixedAngle/CAllbutOH',"OHFixed",15,'deltaTau')
 # plotthispls('MorseOH/Mon20k',"MorseOsc",5,'deltaTauRel')
@@ -407,7 +429,47 @@ xrange=11
 #plotthispls('MorseOH/Dimer20k',"Dimer MorseOsc",5,'deltaTauRel')
 
 
-print(4637.152974-4631.355306)
+# plotthispls('MorseOH/W0p01',"Wexe = 0.01",5,'deltaTau')
+# plotthispls('MorseOH/W0p1',"Wexe = 0.1",5,'deltaTau')
+# plotthispls('MorseOH/W1',"Wexe = 1",5,'deltaTau')
+# plotthispls('MorseOH/W75',"Wexe = 75",5,'deltaTau')
+# plotthispls('MorseOH/W150',"Wexe = 150",5,'deltaTau')
+# plotthispls('MorseOH/W300',"Wexe = 300",5,'deltaTau')
+# plotthispls('MorseOH/W600',"Wexe = 600",5,'deltaTau')
+#plotthispls('MorseOH/HexamerBonded',"Hexamer bonded OH stretch",5,'deltaTauRel')
+# plotthispls('MorseOH/HarmoincOsc',"w=3700",5,'deltaTau')
+# plotthispls('MorseOH/DHarmonic',"w=2850",5,'deltaTau')
+# plotthispls('MorseOH/DMorse',"w=2850",5,'deltaTauRel')
+# plotthispls('MorseOH/CheckRyan1',"wexe=1",5,'deltaTau')
+# plotthispls('MorseOH/CheckRyan75',"wexe=75",5,'deltaTau')
+# for i in np.arange(4,13):
+# #     plotthispls(f'MorseOH/Prism/{i}',f"Prism {i}",5,'deltaTau')
+# for i in np.arange(5,13):
+#     plotthispls(f'MorseOH/Cage/{i}',f"Cage {i}",5,'deltaTau')
+
+# plotthispls('PotExpl/QuarticExp',"Carrington Monomer",5,'deltaTau')
+# plotthispls('Coupling/HCNoStretch',"Carrington No Stretch-Stretch",5,'deltaTau')
+# plotthispls('Coupling/HCNoStretchWeird',"Carrington No Stretch-Stretch Weird Parameter",5,'deltaTau')
+# plotthispls('Coupling/Morse',"Morse Osc with Carrington Vals",5,'deltaTau')
+# plotthispls('Coupling/DoubleMorse',"2 Uncoupled Morse Osc with Carrington Vals",5,'deltaTau')
+# plotthispls('Coupling/FixedAngleNoPrime',"Carrington with fixed angle and no r prime terms",5,'deltaTau')
+# plotthispls('Coupling/Onlyr',"Carrington monomer with only r terms",5,'deltaTau')
+# plotthispls('Coupling/NorPrimeorTheta',"Carrington monomer with only r terms and theta terms",5,'deltaTau')
+# plotthispls('Coupling/rrprime',"Carrington monomer with only r terms and r prime terms (exclusing rrprimetheta term)",5,'deltaTau')
+# plotthispls('Coupling/rrprimewt',"Carrington monomer with only r terms and r prime terms (including rrprimetheta term)",5,'deltaTau')
+# plotthispls('Coupling/rtrprime',"Carrington monomer with only r terms, r prime terms, and theta terms ",5,'deltaTau')
+
+# plotthispls('DeuterMillion','Deuterated Million Walkers',5,'hunthou')
+# plotthispls('DeuterMillion/Nonint','Deuterated 100k walkers in a noninteracting hexamer',5,'hunthou')
+
+
+# plotthispls('MorseOH/BigMonomer',"Same Total Time",4,'deltaTauS')
+# plotthispls('MorseOH/BigMonomer',"Same Num Time Steps",4,'deltaTau')
+
+
+
+
+# print(4637.152974-4631.355306)
 
 
 # plt.plot(np.arange(xrange), np.repeat(4638, xrange), 'k',label="P-S ZPE")
@@ -423,7 +485,7 @@ plt.ylabel("Energy per Molecule (Cm-1)")
 coolhalfmilliontau1ref=4631.54
 
 # plt.plot(np.arange(xrange), np.repeat(coolhalfmilliontau1ref, xrange), 'k',label="Half mil mon dt=10",color="pink")
-plt.legend(loc='top right')
+plt.legend()
 
 plt.show()
 # monomerOHstretch()

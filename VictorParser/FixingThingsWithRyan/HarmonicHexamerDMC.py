@@ -20,7 +20,6 @@ for weirdsimthingy in np.arange(0,1):
     k = m * (omega ** 2)
     De=np.square(omega)/(4*wexe)
     beta=np.sqrt(k/(2*De))
-
     dimensions = 1
     numWalkers = 2000
     numTimeSteps = 2000

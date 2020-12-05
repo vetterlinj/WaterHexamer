@@ -19,9 +19,10 @@ def OODistance(coords,waterone,watertwo,weights):
 def bigOne(path,dataname,cageorprism):
     resultslist = []
     realweights=[]
-    for wfnnumber in np.arange(1,6,1):
+    for wfnnumber in np.arange(1,3,1):
         path= f"IlahieStuff/Hex150K/wavefunctions{wfnnumber}/"
-        for filenumber in np.arange(1,20,1):
+        for filenumber in np.arange(1,15,1):
+            print('NextFile')
             file = np.load(path+dataname+str(filenumber)+'.npz')
             coords=file['coords']
             weights=file['weights']
@@ -98,7 +99,7 @@ def bigOne(path,dataname,cageorprism):
     plt.ylabel("Probability Amplitude")
     plt.title(f'All Wavefunctions')
     # plt.show()
-    plt.savefig(f'Results/OOTest.png')
+    plt.savefig(f'Results/OODeuter.png')
     plt.clf()
 #10 and 17?
 #stdev: block average the 5 then compute stdev of the second
@@ -142,8 +143,8 @@ def bigOne(path,dataname,cageorprism):
 #     allH=False
 #     bigOne(path,dataname)
 
-# path="IlahieStuff/Hex150K/wavefunctions1/"
-# bigOne(path,'wavefunction_','OO')
+path="IlahieStuff/MillionDeuter/wavefunctions1/"
+bigOne(path,'wavefunction_','OO')
 
 
 
@@ -174,4 +175,4 @@ def checkangle(location):
     print(max(biglist))
     # print(biglist[[x>105 for x in biglist]])
     # print(biglist[[x<104 for x in biglist]])
-checkangle("FixingThingsWithRyan/FixedAngle")
+# checkangle("FixingThingsWithRyan/FixedAngle")

@@ -14,7 +14,7 @@ hasWeights=False
 for simulation in np.arange(1, 2):
     count=0
 
-    data = open('UpdatedPrism/Raw/d2o6/d2o6_prism_coords.dat', "rb")
+    data = open('UpdatedPrism/Raw/h2o6_prism_coords_noimp_150k_walkers.dat', "rb")
     if hasWeights==True:
         weightfile = open('UpdatedPrism/Raw/d2o6/d2o6_prism_weight.dat', "r")
     skip_ws(data)
@@ -52,11 +52,12 @@ for simulation in np.arange(1, 2):
                 weights[x] = np.double(weights[x])
 
         paddednumber=str(count).zfill(3)
-
         if hasWeights==False:
-            np.savez(f'UpdatedPrism/Parsed/h2o5_d2o/D2/D2{paddednumber}',coords=newwfns,time=time,NumWalkers=number,InitialWalkers=initialwalkers,Size=number)
+            # np.savez(f'UpdatedPrism/Parsed/150kh2o6/150kprismwfn{paddednumber}',coords=newwfns,time=time,NumWalkers=number,InitialWalkers=initialwalkers,Size=number)
             print(count)
         if hasWeights==True:
             np.savez(f'UpdatedPrism/Parsed/d2o6/d2o6{paddednumber}', coords=newwfns, weights=weights,
                      time=time, NumWalkers=number, InitialWalkers=initialwalkers, Size=number)
             print(count)
+np.save(f'UpdatedPrism/Parsed/150kh2o6/initial_prism_walkers',newwfns)
+print()

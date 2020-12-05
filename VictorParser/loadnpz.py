@@ -181,3 +181,4 @@ def writeMeAnXYZFile(walkercoords, filename, deuteriumPosition):
                 "H     " + str(walkercoords[oranges+2, 0]) + "     " + str(walkercoords[oranges+2, 1]) + "     " + str(
                     walkercoords[oranges+2, 2]) + "\n"))
     coordsfile.close()
+writeMeAnXYZFile(np.load("FixingThingsWithRyan/DeuterMillion/initial_prism_walkers.npy")[0],"prismcheck.xyz",22)

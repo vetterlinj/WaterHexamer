@@ -1,4 +1,5 @@
 import numpy as np
+import argparse
 import matplotlib.pyplot as plt
 # import sys
 # sys.path.insert(0, 'FixingThingsWithRyan')
@@ -10,18 +11,33 @@ import matplotlib.pyplot as plt
 #Harmonic to Morse to 2*1D to 6D
 
 amutoelectron=1.000000000000000000/6.02213670000e23/9.10938970000e-28
-massH=1.008*amutoelectron
-massO=16*amutoelectron
+massH=1.00794*amutoelectron
+massO=15.9994*amutoelectron
 m=(massH*massO)/(massH+massO)
 #omega=1
-omega=3000*(4.5563e-6)
+omega=3700*(4.5563e-6)
 k=m*(omega**2)
 dimensions=1
 numWalkers=20000
-numTimeSteps=20000
+numTimeSteps=40000
 deltaTau=1
 sigma=np.sqrt(deltaTau/m)
 alpha=1/(2*deltaTau)
+bunchofjobs=False
+if bunchofjobs == True:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--string', help='<Required> File Name', required=True)
+    parser.add_argument('-l', '--list', nargs='+', help='<Required> Set flag', required=True)
+    args = parser.parse_args()
+    fnameExtension = args.string
+    numWalkers = int(args.list[0])
+    deltaTau = int(args.list[2])
+    numTimeSteps = int(args.list[1]) / deltaTau
+    namedeltaTau = str(deltaTau).replace(".", "point")
+    sigma = np.sqrt(deltaTau / m)
+    alpha = 1 / (2 * deltaTau)
+    filename = "Results/Multiple/Harmonic/" + fnameExtension# + f"_{namedeltaTau}"
+    resultsfilename = "Results/Multiple/Harmonic/npzFiles/" + fnameExtension #+ f"_{namedeltaTau}"
 # V=h2o_pot.calc_hoh_pot
 #first is array, second is length of the array
 #mass for each coord
@@ -83,45 +99,44 @@ def birthandDeath(coords, energies, alpha, numWalkers, weights, deltaTau):
         birthedweights = np.append(deletedweights, appendlist)
     return birthedcoords, birthedweights
 superlist=[]
-for run in np.arange(0,10):
-    if run %2==0:
-        deltaTau = 1
-        sigma = np.sqrt(deltaTau / m)
-        alpha = 1 / (2 * deltaTau)
-        print(deltaTau)
-    else:
-        deltaTau = 10
-        sigma = np.sqrt(deltaTau / m)
-        alpha = 1 / (2 * deltaTau)
-        print(deltaTau)
+# for run in np.arange(0,10):
+#     if run %2==0:
+#         deltaTau = 10
+#         sigma = np.sqrt(deltaTau / m)
+#         alpha = 1 / (2 * deltaTau)
+#         print(deltaTau)
+#     else:
+#         deltaTau = 1
+#         sigma = np.sqrt(deltaTau / m)
+#         alpha = 1 / (2 * deltaTau)
+#         print(deltaTau)
 
-    coords=np.zeros((numWalkers,dimensions))
-    weights=np.zeros((numWalkers))
-    weights+=1
-    # print(len(coords[:,0]))
-    count=0
-    fullEnergies=[]
-    for i in np.arange(0,numTimeSteps):
-        # if count%100==0:
-            # print(count)
-        count+=1
-        coords=randommovement(coords,sigma)
-        energies=getDemEnergies(coords)
-        averageEnergy=np.average(energies)
-        # Vref = averageEnergy - (alpha / numWalkers * (len(coords) - numWalkers))
-        Vref = averageEnergy - (alpha * np.log(np.sum(weights) / numWalkers))
-        fullEnergies.append([i,Vref,np.std(energies)])
-        coords,weights=birthandDeath(coords, energies,alpha,numWalkers,weights,deltaTau)
-        # print(count)
-        # print(len(coords))
-    fullEnergies=np.array(fullEnergies)
-    # plt.errorbar(fullEnergies[:,0],fullEnergies[:,1],yerr=fullEnergies[:,2])
-    # plt.plot(fullEnergies[:,0],fullEnergies[:,1]/(4.5563e-6))
-    averageEnergy=np.average(fullEnergies[int(len(fullEnergies)/2):,1])
-    print(averageEnergy/(4.5563e-6))
-    superlist.append(averageEnergy/(4.5563e-6))
-    # plt.show()
-print(superlist)
+coords=np.zeros((numWalkers,dimensions))
+weights=np.zeros((numWalkers))
+weights+=1
+# print(len(coords[:,0]))
+count=0
+fullEnergies=[]
+for i in np.arange(0,numTimeSteps):
+    if count%100==0:
+        print(count)
+    count+=1
+    coords=randommovement(coords,sigma)
+    energies=getDemEnergies(coords)
+    averageEnergy=np.average(energies)
+    # Vref = averageEnergy - (alpha / numWalkers * (len(coords) - numWalkers))
+    Vref = averageEnergy - (alpha * np.log(np.sum(weights) / numWalkers))
+    fullEnergies.append([i,Vref,np.std(energies)])
+    coords,weights=birthandDeath(coords, energies,alpha,numWalkers,weights,deltaTau)
+    # print(count)
+    # print(len(coords))
+fullEnergies=np.array(fullEnergies)
+# plt.errorbar(fullEnergies[:,0],fullEnergies[:,1],yerr=fullEnergies[:,2])
+# plt.plot(fullEnergies[:,0],fullEnergies[:,1]/(4.5563e-6))
+averageEnergy=np.average(fullEnergies[int(len(fullEnergies)/2):,1])
+print(averageEnergy/(4.5563e-6))
+np.savez(resultsfilename+"Data",energies=fullEnergies,coords=coords,iwalkers=numWalkers,deltatau=deltaTau,timesteps=numTimeSteps,weights=weights)
+
 
 
 
