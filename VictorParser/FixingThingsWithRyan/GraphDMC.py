@@ -404,7 +404,7 @@ xrange=11
 # plotthispls('PotExpl/UncorrHOD',"Uncorr HOD",5,'deltaTauRel')
 # plotthispls('PotExpl/QuarticExp',"Carrington",5,'deltaTau')
 # plotthispls('PotExpl/HOD',"HOD",4,'deltaTauRel')
-# plotthispls('PotExpl/HOH',"HOH",4,'deltaTauRel')
+plotthispls('PotExpl/HOH',"HOH",4,'deltaTau')
 
 # plotthispls('150kHexamer','150kHexamer',5,'hunthou')
 
@@ -461,7 +461,9 @@ xrange=11
 
 # plotthispls('DeuterMillion','Deuterated Million Walkers',5,'hunthou')
 # plotthispls('DeuterMillion/Nonint','Deuterated 100k walkers in a noninteracting hexamer',5,'hunthou')
-
+plotthispls('PrismMillion','1 million walkers in a Prism hexamer',2,'hunthou')
+# plotthispls('frozenCage/AAD','20k walkers where all but 1 AAD water are frozen in place in the cage',5,'deltaTau')
+# plotthispls('frozenCage/ADD','20k walkers where all but 1 ADD water are frozen in place in the cage',5,'deltaTau')
 
 # plotthispls('MorseOH/BigMonomer',"Same Total Time",4,'deltaTauS')
 # plotthispls('MorseOH/BigMonomer',"Same Num Time Steps",4,'deltaTau')

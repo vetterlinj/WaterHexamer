@@ -181,4 +181,7 @@ def writeMeAnXYZFile(walkercoords, filename, deuteriumPosition):
                 "H     " + str(walkercoords[oranges+2, 0]) + "     " + str(walkercoords[oranges+2, 1]) + "     " + str(
                     walkercoords[oranges+2, 2]) + "\n"))
     coordsfile.close()
-writeMeAnXYZFile(np.load("FixingThingsWithRyan/DeuterMillion/initial_prism_walkers.npy")[0],"prismcheck.xyz",22)
+# writeMeAnXYZFile(np.load("FixingThingsWithRyan/DeuterMillion/initial_prism_walkers.npy")[0],"prismcheck.xyz",22)
+# writeMeAnXYZFile(np.load("FixingThingsWithRyan/frozenCage/AAD/npzFiles/frozenHexAAD1_0Data.npz")['coords'][36:54,:]/0.529177,"strangeCage.xyz",22)
+# writeMeAnXYZFile(np.load("FixingThingsWithRyan/frozenCage/ADD/npzFiles/frozenHexADD1_0Data.npz")['coords'][0:18,:]/0.529177,"strangeCage.xyz",22)
+writeMeAnXYZFile(np.load("FixingThingsWithRyan/frozenCage/AD/npzFiles/frozenHexAD1_0Data.npz")['coords'][18:36,:]/0.529177,"strangeCage.xyz",22)

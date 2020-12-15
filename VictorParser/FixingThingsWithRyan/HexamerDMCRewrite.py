@@ -17,9 +17,9 @@ hex_pot = pm.Potential(potential_function=pot_func,
                          python_file=py_file,
                          potential_directory=pot_dir,
                          num_cores=2)
-oranges=np.random.random((100,18,3))
-print(hex_pot.getpot(oranges))
-exit()
+# oranges=np.random.random((100,18,3))
+# print(hex_pot.getpot(oranges))
+# exit()
 # from VictorParser.Constants import *
 # import sys
 # sys.path.insert(0, 'FixingThingsWithRyan')
@@ -42,7 +42,7 @@ for weirdsimthingy in np.arange(0,1):
     ContWeights=False
     debut=False
     atomicMass=True
-    CarringtonPot=True
+    CarringtonPot=False
     primecup=0
     print('running')
     filename='DMCResult'
