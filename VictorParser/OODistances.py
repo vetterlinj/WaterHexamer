@@ -19,12 +19,15 @@ def OODistance(coords,waterone,watertwo,weights):
 def bigOne(path,dataname,cageorprism):
     resultslist = []
     realweights=[]
-    for wfnnumber in np.arange(1,2,1):
+    for wfnnumber in np.arange(3,4,1):
         # path= f"IlahieStuff/Hex150K/wavefunctions{wfnnumber}/"
-        path = f"FixingThingsWithRyan/PrismMillion/wavefunctions{wfnnumber}/"
-        for filenumber in np.arange(1,15,1):
+
+
+        # path = f"FixingThingsWithRyan/PrismMillion/wavefunctions{wfnnumber}/"
+        for filenumber in np.arange(1,2,1):
             print('NextFile')
-            file = np.load(path+dataname+str(filenumber)+'.npz')
+            # file = np.load(path+dataname+str(filenumber)+'.npz')
+            file=np.load(path)
             coords=file['coords']
             weights=file['weights']
             numbers=[]
@@ -100,7 +103,7 @@ def bigOne(path,dataname,cageorprism):
     plt.ylabel("Probability Amplitude")
     plt.title(f'All Wavefunctions')
     # plt.show()
-    plt.savefig(f'Results/OO1Prism.png')
+    plt.savefig(f'Results/brokencage.png')
     plt.clf()
 #10 and 17?
 #stdev: block average the 5 then compute stdev of the second
@@ -145,8 +148,10 @@ def bigOne(path,dataname,cageorprism):
 #     bigOne(path,dataname)
 
 # path="IlahieStuff/MillionDeuter/wavefunctions1/"
-path="FixingThingsWithRyan/PrismMillion/wavefunctions/"
-bigOne(path,'wavefunction_','OO')
+path="test/walkers_1000.npz"
+#walkers_1000.npz
+# path="FixingThingsWithRyan/PrismMillion/wavefunctions3/"
+bigOne(path,'wavefunction_','cage')
 
 
 

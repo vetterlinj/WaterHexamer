@@ -59,12 +59,12 @@ for weirdsimthingy in np.arange(0,1):
     # k = m * (omega ** 2)
     dimensions = 3
     watersperwalker=1
-    numWalkers = 1000
-    numTimeSteps = 1000
-    deltaTau = 10
+    numWalkers = 20000
+    numTimeSteps = 20000
+    deltaTau = 1
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=False
+    bunchofjobs=True
     ContWeights=False
     debut=False
     atomicMass=True
@@ -80,11 +80,11 @@ for weirdsimthingy in np.arange(0,1):
         args = parser.parse_args()
         fnameExtension=args.string
 
-        numWalkers=int(args.list[0])
-        deltaTau=int(args.list[2])
+        numResume=int(args.list[0])
+        # deltaTau=int(args.list[2])
         #alphaTau=int(args.list[3])
-        numTimeSteps = int(args.list[1])/deltaTau
-        namedeltaTau = str(deltaTau).replace(".", "point")
+        # numTimeSteps = int(args.list[1])/deltaTau
+        namedeltaTau = f"ResDtau{numResume}"
         # sigma = np.sqrt(deltaTau / m)
         alpha = 1 / (2 * deltaTau)
     for i in np.arange(0,1):
@@ -104,9 +104,9 @@ for weirdsimthingy in np.arange(0,1):
             # numTimeSteps=int(totalTime/deltaTau)
             # print(numTimeSteps)
             # namedeltaTau=str(deltaTau).replace(".","point")
-            filename = f"Results/Multiple/{foldername}/" + fnameExtension #+ f"_{namedeltaTau}_{i}"
+            filename = f"Results/Multiple/{foldername}/" + fnameExtension + f"_{namedeltaTau}"
             # print(filename)
-            resultsfilename = f"Results/Multiple/{foldername}/npzFiles/" + fnameExtension #+ f"_{namedeltaTau}_{i}"
+            resultsfilename = f"Results/Multiple/{foldername}/npzFiles/" + fnameExtension + f"_{namedeltaTau}"
         #first is array, second is length of the array
         #mass for each coord
         def randommovement(coords,dimensions,deltaTau):
@@ -210,11 +210,16 @@ for weirdsimthingy in np.arange(0,1):
                        [-2.86669414, -0.14282213, -0.31653989],
                        [-2.17356321, -0.01889467, -0.98894102],
                        [-3.61843908, 0.36974668, -0.61083718]]
-        coords = np.array(initialcage * numWalkers)/0.529177#*1.01
+        # coords = np.array(initialcage * numWalkers)/0.529177#*1.01
         initialcage = np.reshape(initialcage, (len(initialcage) // 18, 18, 3))/0.529177
         zeroinenergy=(hex_pot.getpot(initialcage) / 627.5094740631 / 4.5563e-6)
         print(zeroinenergy)
+        coords=np.load(f"Results/Multiple/{foldername}/npzFiles/" + fnameExtension +".npz")[coords]
         weights=np.ones(numWalkers)
+        for newWalker in np.arange(0,abs(numWalkers-len(coords//18))):
+            actualwalker=np.random.randint(0,len(coords)//18)*18
+            for ff in np.arange(0, (18 * watersperwalker), 1):
+                coords.append(coords[actualwalker + ff])
         count=0
         fullEnergies=[]
         fullWalkers=[]

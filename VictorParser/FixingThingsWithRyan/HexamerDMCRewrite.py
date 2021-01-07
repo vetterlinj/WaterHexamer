@@ -299,6 +299,7 @@ for weirdsimthingy in np.arange(0,1):
                 birthlist = []
                 deathlist = []
                 deathweights=[]
+                walkeratbeginning = len(coords/3)
                 deathcount=0
                 for walker in np.arange(0, int(len(coords)/(3*watersperwalker))):
                     expon=np.exp(-deltaTau * (energies[walker] - Vref))
