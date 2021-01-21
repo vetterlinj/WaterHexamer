@@ -18,7 +18,7 @@ def plotthispls(location,label,numberofeach,xaxis):
         ploty=[]
         plotx=[]
         plotstd=[]
-        for startvalue in np.arange(2000,3000,1000):
+        for startvalue in np.arange(6000,7000,1000):
             for file in npyFilePaths:
                 print(file)
                 data = np.load(file)
@@ -33,8 +33,8 @@ def plotthispls(location,label,numberofeach,xaxis):
                 # print(np.std(data[2000:len(data)]) / 6 / 4.5563e-6)
                 orangeslist.append(millionnumber)
                 print(len(data))
-                print(np.average(data[6000:len(data)]) / 4.5563e-6)
-                print(np.std(data[6000:len(data)]) / 4.5563e-6)
+                print(np.average(data[60000:len(data)]) / 4.5563e-6)
+                print(np.std(data[60000:len(data)]) / 4.5563e-6)
                 # plt.plot(np.arange(11), np.repeat(millionnumber, 11), 'k',
                 #          label="Dtau=10 Million Number after 6000 time steps", color='purple')
             print(f"Average is "+str(np.average(orangeslist)))
@@ -129,7 +129,7 @@ def plotthispls(location,label,numberofeach,xaxis):
                 secondcount+=1
         count +=1
         fullEnergies=data['energies']#/(4.5563e-6)
-        averageEnergy = np.average(fullEnergies[5000:-1, 1])
+        averageEnergy = np.average(fullEnergies[4000:-1, 1])
         #print(len(fullEnergies))
         # print(np.average(fullEnergies[1000:2000,1]))
         if xaxis=='deltaTauS':
@@ -187,8 +187,8 @@ def plotthispls(location,label,numberofeach,xaxis):
 
 
 def plotOverTime(location,label):
-    path=f"10kSmall/"
-    npzFilePaths = glob.glob(os.path.join(path, '*.npz'))
+    path=location+"/npzFiles/"
+    npzFilePaths = glob.glob(os.path.join(path, '*.npy'))
     npzFilePaths.sort()
     print(npzFilePaths)
 
@@ -198,12 +198,16 @@ def plotOverTime(location,label):
     for file in npzFilePaths:
         data=np.load(file)
         if count==0:
-            fullEnergies=data['energies']
+            # fullEnergies=data['energies']
+            fullEnergies = data/ 4.5563e-6
+            print()
             # print(np.average(fullEnergies[1000:2000,1]))
-            for number in np.arange(8000,10001,1):
-                print(fullEnergies[number,1])
-                Xval.append(fullEnergies[number,0])
-                Yval.append(fullEnergies[number, 1])
+            for number in np.arange(0,len(fullEnergies),1):
+                # print(fullEnergies[number,1])
+                # Xval.append(fullEnergies[number,0])
+                # Yval.append(fullEnergies[number, 1])
+                Xval.append(number)
+                Yval.append(fullEnergies[number])
         #     if count ==4:
         #         Yval.append(np.average(groupedY))
         #         Ystd.append(np.std(groupedY))
@@ -211,9 +215,9 @@ def plotOverTime(location,label):
         count += 1
     print(len(Xval))
     print(len(Yval))
-
     plt.plot(Xval, Yval, label=label)
-    plt.ylim(4000,5000)
+    plt.ylim(16000,17000)
+    plt.show()
 def monomerOHstretch():
     path='50kauContW/1and10/'
     npzFilePaths = glob.glob(os.path.join(path, '*.npz'))
@@ -468,7 +472,8 @@ plotthispls('frozenCage/AAD','20k walkers where all but 1 AAD water are frozen i
 
 # plotthispls('MorseOH/BigMonomer',"Same Total Time",4,'deltaTauS')
 # plotthispls('MorseOH/BigMonomer',"Same Num Time Steps",4,'deltaTau')
-
+# plotthispls('MillionCageDtau1','1 million walkers in a Cage hexamer with dtau of 1',1,'hunthou')
+# plotOverTime('MillionCageDtau1','1 million walkers in a Cage hexamer with dtau of 1')
 
 
 
