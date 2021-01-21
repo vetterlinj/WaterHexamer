@@ -9,7 +9,7 @@ TryUncorrPot=False
 if TryUncorrPot==True:
     import h2o_uncorr_pot
 import os
-
+#DMC using Ryan's potential manager from pyvibdmc and Victor's optimized cage and keeps all but one (the first) water frozen in place while propagating the unfrozen water.
 pot_dir = 'legacy_mbpol/'  # this directory is part of the one you copied that is outside of pyvibdmc.
 py_file = 'callmbpol.py'
 pot_func = 'call_a_cpot'  # def water_pot(cds) in h2o_potential.py
@@ -60,12 +60,12 @@ for weirdsimthingy in np.arange(0,1):
     # k = m * (omega ** 2)
     dimensions = 3
     watersperwalker=1
-    numWalkers = 1000
-    numTimeSteps = 1000
+    numWalkers = 200
+    numTimeSteps = 200
     deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=True
+    bunchofjobs=False
     ContWeights=False
     debut=False
     atomicMass=True

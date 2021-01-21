@@ -1,7 +1,7 @@
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
-import sys
+#This DMC takes a water monomer and fixes one OH stretch in place, and then propagates the other stretch. Essentially, one Hydrogen and the Oxygen don't move, only the second Hydrogen.
 import h2o_pot
 TryUncorrPot=False
 if TryUncorrPot==True:
@@ -20,12 +20,12 @@ for weirdsimthingy in np.arange(0,1):
     # k = m * (omega ** 2)
     dimensions = 3
     watersperwalker=1
-    numWalkers = 2000
-    numTimeSteps = 2000
+    numWalkers = 200
+    numTimeSteps = 200
     deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=True
+    bunchofjobs=False
     ContWeights=False
     debut=False
     atomicMass=True

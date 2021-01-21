@@ -6,10 +6,9 @@ import h2o_pot
 TryUncorrPot=False
 if TryUncorrPot==True:
     import h2o_uncorr_pot
-import os
-# from VictorParser.Constants import *
-# import sys
-# sys.path.insert(0, 'FixingThingsWithRyan')
+#A DMC that propagates waters. Change watersperwalker in order to include more than 1 water in each walker.
+
+
 for weirdsimthingy in np.arange(0,1):
     # amutoelectron = 1.000000000000000000 / 6.02213670000e23 / 9.10938970000e-28
     # massH = 1.008 * amutoelectron
@@ -20,12 +19,12 @@ for weirdsimthingy in np.arange(0,1):
     # k = m * (omega ** 2)
     dimensions = 3
     watersperwalker=1
-    numWalkers = 1000
-    numTimeSteps = 2000
+    numWalkers = 200
+    numTimeSteps = 200
     deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=True
+    bunchofjobs=False
     ContWeights=False
     debut=False
     atomicMass=True

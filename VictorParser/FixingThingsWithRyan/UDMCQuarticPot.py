@@ -17,12 +17,12 @@ for weirdsimthingy in np.arange(0,1):
     # k = m * (omega ** 2)
     dimensions = 3
     watersperwalker=1
-    numWalkers = 20000
-    numTimeSteps = 20000
+    numWalkers = 200
+    numTimeSteps = 200
     deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=True
+    bunchofjobs=False
     ContWeights=False
     debut=False
     atomicMass=True
@@ -52,23 +52,6 @@ for weirdsimthingy in np.arange(0,1):
             filename = f"Results/Multiple/{foldername}/" + fnameExtension + f"_{namedeltaTau}_{i}"
             print(filename)
             resultsfilename = f"Results/Multiple/{foldername}/npzFiles/" + fnameExtension + f"_{namedeltaTau}_{i}"
-            # fnameExtension=sys.argv[1]
-            # arg2=sys.argv[2]
-            # numWalkers=int(arg2)
-            # arg3 = sys.argv[3]
-            # totalTime=int(arg3)
-            # arg4= sys.argv[4]
-            # deltaTau=float(arg4)-weirdsimthingy/2
-            # numTimeSteps=int(totalTime/deltaTau)
-            # print(numTimeSteps)
-            # namedeltaTau=str(deltaTau).replace(".","point")
-            # filename="Results/Multiple/Harmonic/"+fnameExtension+f"_{namedeltaTau}_{i}"
-            # print(filename)
-            # resultsfilename="Results/Multiple/Harmonic/npzFiles/"+fnameExtension+f"_{namedeltaTau}_{i}"
-        # sigma=np.sqrt(deltaTau/m)
-        # V=h2o_pot.calc_hoh_pot
-        #first is array, second is length of the array
-        #mass for each coord
         def randommovement(coords,dimensions,deltaTau):
             #check
             countmove = 0

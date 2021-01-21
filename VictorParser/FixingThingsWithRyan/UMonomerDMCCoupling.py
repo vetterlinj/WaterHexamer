@@ -1,23 +1,14 @@
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
-import sys
+
 import h2o_pot
 TryUncorrPot=False
-if TryUncorrPot==True:
-    import h2o_uncorr_pot
-import os
-# from VictorParser.Constants import *
-# import sys
-# sys.path.insert(0, 'FixingThingsWithRyan')
+#In this DMC, we mess with various coupling parameters in the Halonen Carington Potential. In order to do this, in GetDemEnergies, a term "primecup" is set equal to 0
+#and added in front of any terms we want to remove. A definition of these terms can be found in the Halonen and Carrington paper.
+
 for weirdsimthingy in np.arange(0,1):
     amutoelectron = 1.000000000000000000 / 6.02213670000e23 / 9.10938970000e-28
-    # massH = 1.008 * amutoelectron
-    # massO = 16 * amutoelectron
-    # m = (massH * massO) / (massH + massO)
-    # omega=1
-    # omega = 3000 * (4.5563e-6)
-    # k = m * (omega ** 2)
     dimensions = 3
     watersperwalker=1
     numWalkers = 1000
@@ -34,7 +25,8 @@ for weirdsimthingy in np.arange(0,1):
     print('running')
     filename='DMCResult'
     energieslist=[]
-    if bunchofjobs == True:
+    fnameExtension="empty"
+    if bunchofjobs == False:
         parser = argparse.ArgumentParser()
         parser.add_argument('-s', '--string', help='<Required> File Name', required=True)
         parser.add_argument('-l', '--list', nargs='+', help='<Required> Set flag', required=True)
@@ -54,25 +46,9 @@ for weirdsimthingy in np.arange(0,1):
                 foldername="ContHex"
             elif ContWeights==False:
                 foldername="DiscHex"
-
-            # fnameExtension=sys.argv[1]
-            # arg2=sys.argv[2]
-            # numWalkers=int(arg2)
-            # arg3 = sys.argv[3]
-            # totalTime=int(arg3)
-            # arg4= sys.argv[4]
-            # deltaTau=float(arg4)-weirdsimthingy/2
-            # numTimeSteps=int(totalTime/deltaTau)
-            # print(numTimeSteps)
-            # namedeltaTau=str(deltaTau).replace(".","point")
             filename = f"Results/Multiple/{foldername}/" + fnameExtension  # + f"_{namedeltaTau}_{i}"
             # print(filename)
             resultsfilename = f"Results/Multiple/{foldername}/npzFiles/" + fnameExtension  # + f"_{namedeltaTau}_{i}"
-            # alpha = 1 / (2 * deltaTau)
-        # sigma=np.sqrt(deltaTau/m)
-        # V=h2o_pot.calc_hoh_pot
-        #first is array, second is length of the array
-        #mass for each coord
         def randommovement(coords,dimensions,deltaTau):
             #check
             countmove = 0
@@ -91,18 +67,6 @@ for weirdsimthingy in np.arange(0,1):
             sigmaasymm = np.sqrt(deltaTau * massasymm)
             for atom in np.arange(0, len(coords)):
                 countmove += 1
-                # if countmove % 3 == 0:
-                #     # Oxygen
-                #     if atomicMass==True:
-                #         m = 15.9994 * amutoelectron
-                #     else:
-                #         m =99.76/100*29148.94642+0.048/100*30979.52128+0.20/100*32810.46286
-                # else:
-                #     # Hydrogen
-                #     if atomicMass == True:
-                #         m = 1.00794 * amutoelectron
-                #     else:
-                #         m=99.985/100*1836.152697+3670.483031/100*(100-99.985)
                 if countmove % 3 == 0:
                     # Oxygen
                     m = 15.9994 * amutoelectron
@@ -110,45 +74,12 @@ for weirdsimthingy in np.arange(0,1):
                 else:
                     # Hydrogen
                     m = 1.00794 * amutoelectron
-                # elif countmove %3 == 2:
-                #     # Deuterium
-                #     m = 2.014102 * amutoelectron
                 sigma = np.sqrt(deltaTau / m)
                 randomCoord = np.zeros((dimensions))
                 for coordinate in np.arange(0, dimensions):
                     randomCoord[coordinate] += np.random.normal(0, sigma)
                 coords[atom] += randomCoord
             return coords
-
-
-        '''for molecule in np.arange(0, len(coords)/3):
-            dOH=np.random.normal(0,OHsigma)
-            s=np.random.normal(0, sigmasymm)
-            a=np.random.normal(0, sigmaasymm)
-            r1=(s+a)/np.sqrt(2)
-            r2 = (s - a) / np.sqrt(2)
-            randomCoord = np.zeros((dimensions))
-            # randomCoord[0] += r1
-            randomCoord[0] += dOH
-            coords[np.int(molecule*3)]+=randomCoord'''
-
-        '''randomCoord2 = np.zeros((dimensions))
-        randomCoord2[0]-=r2*np.cos((180-eqdegrees)/360*2*np.pi)
-        randomCoord2[1] += r2 * np.sin((180 - eqdegrees) / 360 * 2 * np.pi)
-        coords[np.int(molecule * 3)+1] += randomCoord2'''
-        if CarringtonPot==False:
-            def getDemEnergies(coords,watersperwalker):
-                #check
-                #################
-                reshapedcoords = np.reshape(coords, (len(coords) // 3, 3, 3))
-                # listenergies = h2o_pot.calc_hoh_pot(reshapedcoords, len(coords) // 3)
-                if TryUncorrPot==True:
-                    listenergies = h2o_uncorr_pot.calc_hoh_pot(reshapedcoords, len(coords) // 3)
-                else:
-                    listenergies = h2o_pot.calc_hoh_pot(reshapedcoords, len(coords) // 3)
-                energies = np.add.reduceat(listenergies, np.arange(0, len(listenergies), watersperwalker))
-                return energies
-
         if CarringtonPot==True:
             def getDemEnergies(coords,watersperwalker):
                 #Carrington
@@ -241,32 +172,7 @@ for weirdsimthingy in np.arange(0,1):
                     if random<prob:
                         for ff in np.arange(0,(3*watersperwalker),1):
                             birthlist.append(coords[actualwalker+ff])
-                        #birth more walkers eg 5 for 5.8 with then prob as if .8
-                    # elif energies[walker]>Vref:
-                    #     prob=1-np.exp(-deltaTau*(energies[walker]-Vref))
-                    #     # print('probability')
-                    #     # print(prob)
-                    #     # print(np.exp(-deltaTau*(energies[walker]-Vref)))
-                    #     # exit()
-                    #     if random<prob:
-                    #         actualwalker=walker*(3*watersperwalker)
-                    #         for ff in np.arange(0, (3*watersperwalker), 1):
-                    #             deathlist.append(actualwalker+ff)
-                    # else:
-                    #     print('I am confuse destroyer of work')
                 birthlist=np.array(birthlist)
-                # deathlist=np.array(deathlist)
-                # if debut==True:
-                #     print("Number Killed: "+str(len(deathlist)/(3*watersperwalker)))
-                # # deletedcoords=np.delete(coords,deathlist,0)
-                # # deletedcoords=np.array(deletedcoords)
-                # # if len(birthlist)==0:
-                #     #print('empty')
-                #     birthedcoords=deletedcoords
-                # else:
-                #     if debut == True:
-                #         print(len(birthlist)/(3*watersperwalker))
-                #     birthedcoords=np.append(deletedcoords,birthlist,axis=0)
                 return birthlist, weights
         elif ContWeights==True:
             def getVref(energies,alpha,weights,numWalkers,coords,watersperwalker):
@@ -275,12 +181,7 @@ for weirdsimthingy in np.arange(0,1):
                 return Vref
             def birthandDeath(coords, energies, alpha, numWalkers,weights,deltaTau,watersperwalker,Vref):
                 averageEnergy = np.average(energies, weights=weights)
-                # print('averageEnergy:')
-                # print(averageEnergy)
-                # Vref = averageEnergy - (alpha / numWalkers * (len(coords) - numWalkers))
                 Vref = averageEnergy - (alpha * np.log(np.sum(weights) / numWalkers))
-                # print(len(coords[:,0]))
-                # print()
                 birthlist = []
                 deathlist = []
                 deathweights=[]
@@ -353,20 +254,6 @@ for weirdsimthingy in np.arange(0,1):
                 print(Vref / (4.5563e-6) / (watersperwalker))
                 print(len(coords)/3)
                 biglist=[]
-                # for molecule in np.arange(0, len(coords), 3):
-                #     actualcoord = molecule
-                #     actualcoord = np.int(actualcoord)
-                #     # if coords[actualcoord][1]!=0:
-                #     #     print('ahhh')
-                #     actualcoord += 1
-                #     print((coords[(actualcoord, 1)]))
-                #     print((coords[(actualcoord, 1)] / np.abs(coords[(actualcoord, 0)])))
-                #     invinput = (coords[(actualcoord, 1)] / np.abs(coords[(actualcoord, 0)]))
-                #     degrees = np.arctan(invinput) * 360 / 2 / np.pi
-                #     print(degrees)
-                #     # print(invinput)
-                #     biglist.append(180 - (np.arctan(invinput) * 360 / (2 * np.pi)))
-                # print(np.average(biglist))
             if i==0:
                 energies=getDemEnergies(coords,watersperwalker)
                 #print(np.average(energies)/(4.5563e-6))
@@ -381,31 +268,8 @@ for weirdsimthingy in np.arange(0,1):
             Vref = getVref(energies, alpha, weights, numWalkers, coords,watersperwalker)
             #print(Vref / (watersperwalker*4.5563e-6))
             fullEnergies.append([i,Vref/(watersperwalker*4.5563e-6)])
-
-            # print(len(coords))
-
-        # coords = randommovement(coords, dimensions, deltaTau)
         biglist=[]
-        # for molecule in np.arange(0, len(coords), 3):
-        #     actualcoord = molecule
-        #     actualcoord = np.int(actualcoord)
-        #     # if coords[actualcoord][1]!=0:
-        #     #     print('ahhh')
-        #     actualcoord += 1
-        #     # print((coords[(actualcoord, 1)]))
-        #     # print((coords[(actualcoord, 1)] / np.abs(coords[(actualcoord, 0)])))
-        #     invinput = (coords[(actualcoord, 1)] / np.abs(coords[(actualcoord, 0)]))
-        #     degrees = np.arctan(invinput) * 360 / 2 / np.pi
-        #     print(degrees)
-        #     # print(invinput)
-        #     biglist.append(180 - (np.arctan(invinput) * 360 / (2 * np.pi)))
-        # print(np.average(biglist))
-        # exit()
-        # energies = getDemEnergies(coords,watersperwalker)
-        # Vref=getVref(energies,alpha,weights,numWalkers,coords,watersperwalker)
-        # fullEnergies.append([numTimeSteps, Vref / (watersperwalker*4.5563e-6)])
         fullEnergies=np.array(fullEnergies)
-        # plt.errorbar(fullEnergies[:,0],fullEnergies[:,1],yerr=fullEnergies[:,2])
         plt.plot(fullEnergies[:,0],fullEnergies[:,1])
         if bunchofjobs==False:
             plt.show()

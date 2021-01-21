@@ -1,31 +1,20 @@
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
-import sys
+#This DMC takes a water monomer, fixes the angle between the OH groups in place (at the optimized geo angle) and then propagates the stretches.
 import h2o_pot
 TryUncorrPot=False
 if TryUncorrPot==True:
     import h2o_uncorr_pot
-import os
-# from VictorParser.Constants import *
-# import sys
-# sys.path.insert(0, 'FixingThingsWithRyan')
 for weirdsimthingy in np.arange(0,1):
-    # amutoelectron = 1.000000000000000000 / 6.02213670000e23 / 9.10938970000e-28
-    # massH = 1.008 * amutoelectron
-    # massO = 16 * amutoelectron
-    # m = (massH * massO) / (massH + massO)
-    # omega=1
-    # omega = 3000 * (4.5563e-6)
-    # k = m * (omega ** 2)
     dimensions = 3
     watersperwalker=1
-    numWalkers = 1000
-    numTimeSteps = 1000
+    numWalkers = 200
+    numTimeSteps = 200
     deltaTau = 10
     # sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    bunchofjobs=True
+    bunchofjobs=False
     ContWeights=False
     debut=False
     atomicMass=True

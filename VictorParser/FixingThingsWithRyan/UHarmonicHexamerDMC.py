@@ -1,5 +1,5 @@
 import numpy as np
-
+#A DMC for running Morse Oscillators using the Omega and WeXe parameters. numberperwalker allows for multiple Morse Oscillators to be included in 1 walker.
 import argparse
 import matplotlib.pyplot as plt
 import sys
@@ -27,7 +27,7 @@ for weirdsimthingy in np.arange(0,1):
     deltaTau = 1
     sigma = np.sqrt(deltaTau / m)
     alpha = 1 / (2 * deltaTau)
-    numberperwalker=2
+    numberperwalker=1
     bunchofjobs=True
     ContWeights=False
     debug=False
